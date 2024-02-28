@@ -18,11 +18,9 @@
     /* --color-link
         --color-link-hover
         --color-link-active
-
-    --color-accent
-        --color-accent-hover */
-
-
+    */
+    --color-accent: #77202f;
+        --color-accent-hover : #B6C8D5;
 
 }
 

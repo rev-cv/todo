@@ -1,14 +1,30 @@
 
+<script>
+    import { page } from '$app/stores';
+
+    let menu = [
+        ["/", "frames"],
+        ["/timeline", "timeline"],
+        ["/day", "for-today"],
+        ["/projects", "projects"],
+        ["/ideas", "ideas"],
+        ["stretch"],
+        ["/user", "user"],
+    ]
+</script>
 
 <header>
-    <a href="."><svg><use xlink:href="#ico-timeline"/></svg></a>
-    <a href="."><svg><use xlink:href="#ico-for-today"/></svg></a>
-    <a href="."><svg><use xlink:href="#ico-projects"/></svg></a>
-    <a href="."><svg><use xlink:href="#ico-ideas"/></svg></a>
-
-    <div class="stretch"></div>
-
-    <a href="."><svg><use xlink:href="#ico-user"/></svg></a>
+    {#each menu as item, index (index)}
+        {#if item[0] === "stretch"}
+            <div class="stretch"></div>
+        {:else}
+            <a 
+                href={item[0]} 
+                class={$page.url.pathname === item[0] ? "active" : ""}
+                > <svg><use xlink:href={`#ico-${item[1]}`}/></svg>
+            </a>
+        {/if}
+    {/each}
 </header>
 
 
@@ -44,6 +60,10 @@
         transition: 0.08s linear;
 
         border: .1em solid rgba(0, 0, 0, .2);
+    }
+
+    header > .active {
+        background-color: var(--color-accent);
     }
 
     header > a:hover {

@@ -4,7 +4,7 @@
 <!-- <h1>User page</h1> -->
 
 <div class="content">
-    <h1>Statistics</h1>
+   000
     
 </div>
 
