@@ -1,9 +1,8 @@
 <script>
-    import SvgSprite from '../components/SvgSprite.svelte';
-    import HeaderMenu from '../components/HeaderMenu.svelte';
-    import NewTask from '../components/NewTask.svelte';
-    import H1Page from '../components/H1Page.svelte';
-
+import SvgSprite from '../components/SvgSprite.svelte';
+import HeaderMenu from '../components/HeaderMenu.svelte';
+import NewTask from '../components/NewTask.svelte';
+import H1Page from '../components/H1Page.svelte';
 </script>
 
 

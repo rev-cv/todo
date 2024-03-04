@@ -1,22 +1,7 @@
 
 <script>
-    import { page } from '$app/stores';
-
-    const month = [
-        "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
-    ]
-    const dayweek = [
-        'Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'
-    ]
-
-    // function getDate() {
-    //     const d = new Date()
-    //     date = `${d.getFullYear()}, ${d.getDate()} ${month[d.getMonth()]}`
-    //     day = dayweek[d.getDay()]
-    //     return ""
-    // }
-
-
+import { page } from '$app/stores';
+import ChangeDate from './ChangeDate.svelte';
 </script>
 
 
@@ -38,10 +23,7 @@
     </h1>
 
     {#if ['/day', '/timeline'].includes($page.url.pathname)}
-        <div class="currentDate">
-            <div>2024, 28 Feb</div>
-            <div>Wednesday</div>
-        </div>
+        <ChangeDate />
     {:else if $page.url.pathname === '/projects'}
         <button class="new-project">
             <svg><use xlink:href="#ico-add"/></svg>
@@ -61,12 +43,19 @@
         display: flex;
         justify-content: space-between;
         align-items: center;
+
+        overflow: hidden;
+    }
+
+    .header-page > * {
+        flex-shrink: 0;
     }
 
     .header-page > h1 {
         font-weight: 700;
         font-size: 2em;
         opacity: .5;
+        flex-grow: 1;
     }
 
     .new-project {

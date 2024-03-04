@@ -12,6 +12,7 @@
         bind:value={inputValue}
         maxlength={maxlength}
         placeholder="New task …"
+        autocomplete="off"
     >
 
     <div class="counter">

@@ -3,6 +3,7 @@
     --font-size: 20px;
 
     --color-canvas: #0B121A;
+    --color-tulle: rgba(11, 18, 26, .7);
     --color-block: hsl(212, 43%, 12%);
         --color-block-select: yellow;
         --color-block-shadow: 0 0 .5em 0px rgb(0, 0, 0), 0 0 2em 0px rgba(0, 0, 0, 0.5);
