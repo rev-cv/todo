@@ -24,6 +24,10 @@
 
 <style>
     #new-task {
+        
+        font-size: 1rem;
+
+
         align-self: center;
         padding: .6em 0 .4em 1em;
 

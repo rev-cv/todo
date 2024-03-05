@@ -96,10 +96,10 @@ function changeMonth (arg=".") {
 
 
 <style>
-
     .widget {
-        font-size: 2em;
-        background-color: yellow;
+
+        font-size: 1.2rem;
+
 
         padding: 1em;
 
@@ -109,6 +109,9 @@ function changeMonth (arg=".") {
         background-color: var(--color-block);
         border-radius: .8em;
         box-shadow: var(--color-block-shadow);
+
+        animation-name: open-widget;
+	    animation-duration: 200ms;
     }
 
     .navigator {
@@ -129,6 +132,8 @@ function changeMonth (arg=".") {
         border-radius: .6em;
         background-color: var(--color-block);
         border: .1em solid rgba(0, 0, 0, .2);
+
+        transition: 0.08s linear;
     }
 
     .btn-back > svg, .btn-next > svg {
@@ -182,7 +187,11 @@ function changeMonth (arg=".") {
     .day:hover, .btn-back:hover, .btn-next:hover {
         box-shadow: var(--color-block-shadow-on-block);
         border: .1em solid rgba(0, 0, 0, 0);
-        transform: scale(1.02);
+        transform: scale(1.05);
+    }
+
+    .day:active, .btn-back:active, .btn-next:active {
+        transform: scale(.9);
     }
 
     .hidden {
@@ -192,5 +201,14 @@ function changeMonth (arg=".") {
 
     .active {
         background-color: var(--color-accent);
+    }
+
+    @keyframes open-widget {
+	    from {  
+            transform: translate(5em, -5em) scale(.7);
+        }
+        to {
+            transform: translate(0,0) scale(1);
+        }
     }
 </style>

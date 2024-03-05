@@ -31,8 +31,11 @@ let menu = [
 <style>
 
     header {
+
+        font-size: 1rem;
         flex-shrink: 0;
 
+        
         background-color: var(--color-block);
         box-shadow: var(--color-block-shadow);
 
@@ -71,12 +74,22 @@ let menu = [
     header > button:hover {
         box-shadow: var(--color-block-shadow-on-block);
         border: .1em solid rgba(0, 0, 0, 0);
-        transform: scale(1.02);
+        transform: scale(1.1);
+    }
+
+    header > button:active {
+        transform: scale(.9);
     }
 
     header > button > svg {
         width: 50%;
         height: 50%;
+    }
+
+    header > .active:hover, header > .active:active {
+        border: .1em solid rgba(0, 0, 0, .2);
+        box-shadow: none;
+        transform: scale(1);
     }
 
     .stretch {

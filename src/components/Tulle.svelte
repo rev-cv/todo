@@ -5,9 +5,11 @@ const dispatch = createEventDispatcher();
 </script>
 
 
-<button class="tulle" on:click={event => {dispatch('click', event)}}>
+<!-- svelte-ignore a11y-click-events-have-key-events -->
+<!-- svelte-ignore a11y-no-static-element-interactions -->
+<div class="tulle" on:click={event => {dispatch('closeDialog', event)}}>
     <slot></slot>
-</button>
+</div>
 
 
 <style>
@@ -26,6 +28,8 @@ const dispatch = createEventDispatcher();
         display: flex;
         justify-content: center;
         align-items: center;
+
+        cursor: pointer;
     }
 
     @keyframes tulle-down {

@@ -53,9 +53,9 @@ function changedate (arg = ".") {
 
 <button class="btn-select-day" on:click={() => {isOpenCalendar = true}}>
     <div class="date">
-        <span>{currentDate.getFullYear()},</span>
-        <span class="day-of-date">{currentDate.getDate()}</span>
-        <span>{month[currentDate.getMonth()]}</span>
+        <div>{currentDate.getFullYear()},</div>
+        <div class="day-of-date">{currentDate.getDate()}</div>
+        <div>{month[currentDate.getMonth()]}</div>
     </div>
     <div class="dayweek">{dayweek[currentDate.getDay()]}</div>
 </button>
@@ -69,7 +69,7 @@ function changedate (arg = ".") {
 </button>
 
 {#if isOpenCalendar}
-    <Tulle on:click={() => {isOpenCalendar = false}} >
+    <Tulle on:closeDialog={() => {isOpenCalendar = false}} >
         <Calendar on:changedate={() => {
             isOpenCalendar = false;
             setIsCurrentDay();
@@ -80,40 +80,63 @@ function changedate (arg = ".") {
 
 <style>
     .btn-back, .btn-now, .btn-next, .btn-select-day {
+
+        font-size: 1rem;
+
+
         background-color: var(--color-block);
-        box-shadow: var(--color-block-shadow);
+        /* box-shadow: var(--color-block-shadow); */
         color: var(--color-content-B);
 
-        margin: .5em;
-        border-radius: .8em;
-        font-size: .8em;
+        margin: .4em .2em;
+        border-radius: .6em;
         border: .1em solid rgba(0, 0, 0, .2);
+
+        display: flex;
+        justify-content: center;
+        align-items: center;
+
+        width: 2.4em;
+        height: 2.4em;
 
         transition: transform 100ms linear;
     }
 
-    .btn-back:hover, .btn-now:hover, .btn-next:hover {
-        transform: scale(1.02);
+    .btn-back:hover, .btn-now:hover, .btn-next:hover, .btn-select-day:hover {
+        transform: scale(1.05);
+        box-shadow: var(--color-block-shadow-on-block);
+        border: .1em solid rgba(0, 0, 0, 0);
+    }
+
+    .btn-back:active, .btn-now:active, .btn-next:active, .btn-select-day:active {
+        transform: scale(.9);
     }
 
     .btn-select-day {
-        padding: .6em 1.8em;
+        width: auto;
+        display: flex;
+        flex-direction: column;
+        padding: .2em .6em;
     }
 
     .btn-back, .btn-now, .btn-next {
-        padding: 1em;
         display: flex;
         justify-content: center;
         align-items: center;
     }
 
     .btn-now {
-        padding: 1em .2EM;
+        width: 1.2em;
     }
 
-    .btn-back > svg, .btn-now > svg, .btn-next > svg {
-        width: 1em;
-        height: 1em;
+    .btn-back > svg, .btn-next > svg {
+        width: 40%;
+        height: 40%;
+    }
+
+    .btn-now > svg {
+        width: 70%;
+        height: 40%;
     }
 
     .btn-back > svg {
@@ -128,8 +151,12 @@ function changedate (arg = ".") {
         background-color: var(--color-accent);
     }
 
+    .is-current-day:active, .is-current-day:hover {
+        transform: scale(1);
+    }
+
     .date {
-        font-size: 1.1em;
+        font-size: .8em;
         font-weight: 700;
         display: flex;
         justify-content: center;
@@ -137,7 +164,7 @@ function changedate (arg = ".") {
     }
 
     .dayweek {
-        font-size: .8em;
+        font-size: .45em;
     }
 
     .day-of-date {
