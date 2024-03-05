@@ -1,35 +1,35 @@
 
 <script>
-import { page } from '$app/stores';
+import { page } from '../store/OpenPage'
 import ChangeDate from './ChangeDate.svelte';
 </script>
 
 
 <div class="header-page">
     <h1>
-        {#if $page.url.pathname === '/'}
+        {#if $page === '/main'}
             Main Page
-        {:else if $page.url.pathname === '/day'}
+        {:else if $page === '/day'}
             Tasks for day
-        {:else if $page.url.pathname === '/ideas'}
+        {:else if $page === '/ideas'}
             Task-Ideas
-        {:else if $page.url.pathname === '/projects'}
+        {:else if $page === '/projects'}
             Projects
-        {:else if $page.url.pathname === '/timeline'}
+        {:else if $page === '/timeline'}
             Tasks with deadline
-        {:else if $page.url.pathname === '/user'}
+        {:else if $page === '/user'}
             Setting
         {/if}
     </h1>
 
-    {#if ['/day', '/timeline'].includes($page.url.pathname)}
+    {#if ['/day', '/timeline'].includes($page)}
         <ChangeDate />
-    {:else if $page.url.pathname === '/projects'}
+    {:else if $page === '/projects'}
         <button class="new-project">
             <svg><use xlink:href="#ico-add"/></svg>
             <span>New project</span>
         </button>
-    {:else if $page.url.pathname === '/projects'}
+    {:else if $page === '/projects'}
         dd
     {/if}
 

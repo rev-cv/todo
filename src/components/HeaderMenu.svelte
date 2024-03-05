@@ -1,16 +1,16 @@
 
 <script>
-    import { page } from '$app/stores';
+import { page } from '../store/OpenPage'
 
-    let menu = [
-        ["/", "frames"],
-        ["/timeline", "timeline"],
-        ["/day", "for-today"],
-        ["/projects", "projects"],
-        ["/ideas", "ideas"],
-        ["stretch"],
-        ["/user", "user"],
-    ]
+let menu = [
+    ["/main", "frames"],
+    ["/timeline", "timeline"],
+    ["/day", "for-today"],
+    ["/projects", "projects"],
+    ["/ideas", "ideas"],
+    ["stretch"],
+    ["/user", "user"],
+]
 </script>
 
 <header>
@@ -18,11 +18,11 @@
         {#if item[0] === "stretch"}
             <div class="stretch"></div>
         {:else}
-            <a 
-                href={item[0]} 
-                class={$page.url.pathname === item[0] ? "active" : ""}
+            <button 
+                on:click={() => {page.set(item[0])}}
+                class={$page === item[0] ? "active" : ""}
                 > <svg><use xlink:href={`#ico-${item[1]}`}/></svg>
-            </a>
+            </button>
         {/if}
     {/each}
 </header>
@@ -44,7 +44,7 @@
         flex-direction: column;
     }
 
-    header > a {
+    header > button {
         background-color: var(--color-block);
         width: 2.4em;
         height: 2.4em;
@@ -60,19 +60,21 @@
         transition: 0.08s linear;
 
         border: .1em solid rgba(0, 0, 0, .2);
+
+        font-size: 1em;
     }
 
     header > .active {
         background-color: var(--color-accent);
     }
 
-    header > a:hover {
+    header > button:hover {
         box-shadow: var(--color-block-shadow-on-block);
         border: .1em solid rgba(0, 0, 0, 0);
         transform: scale(1.02);
     }
 
-    header > a > svg {
+    header > button > svg {
         width: 50%;
         height: 50%;
     }

@@ -1,19 +1,49 @@
+<script>
+import SvgSprite from '../components/SvgSprite.svelte';
+import HeaderMenu from '../components/HeaderMenu.svelte';
+import NewTask from '../components/NewTask.svelte';
+import H1Page from '../components/H1Page.svelte';
+</script>
 
 
+<SvgSprite />
 
-<!-- <h1>User page</h1> -->
 
-<div class="content">
-    <h1>Statistics</h1>
-    
+<div class="layout">
+    <HeaderMenu />
+    <main>
+        <H1Page />
+        <div class="content">
+            000
+        </div>
+        <NewTask />
+    </main>
 </div>
 
 
+<style global>
+    @import "../reset.css";
+    @import "../root.css";
 
-<style>
+    .layout {
+        font-family: "Roboto", sans-serif;
+        font-size: var(--font-size);
+        display: flex;
+        height: 100vh;
+        background-color: var(--color-canvas);
+        color: var(--color-content);
+        letter-spacing: .8px;
+    }
+
+    main {
+        flex-grow: 1;
+
+        display: flex;
+        flex-direction: column;
+    }
+
     .content {
         overflow: auto;
         flex-grow: 1;
     }
-
 </style>
