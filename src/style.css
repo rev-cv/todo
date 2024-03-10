@@ -1,0 +1,68 @@
+
+@import url('https://fonts.googleapis.com/css2?family=Sofia+Sans:ital@0;1&display=swap');
+
+* {
+    font-family: "Sofia Sans", sans-serif;
+    font-optical-sizing: auto;
+    font-weight: 400;
+    font-style: normal;
+}
+
+
+body {
+
+    --font-size: 20px;
+
+    --color-canvas: #0B121A;
+    --color-tulle: rgba(11, 18, 26, .7);
+    --color-block: hsl(212, 43%, 12%);
+        --color-block-select: yellow;
+        --color-block-shadow: 0 0 .5em 0px rgb(0, 0, 0), 0 0 2em 0px rgba(0, 0, 0, 0.5);
+        --color-block-shadow-on-block: 0 0 .5em 0px rgba(0, 0, 0, .5), 0 0 2em 0px rgba(0, 0, 0, 0.2);
+        --color-block-border: yellow;
+        --color-block-hover: blue;
+
+    --color-content: #B6C8D5;
+        --color-content-A: rgba(182, 200, 213, 1);
+        --color-content-B: rgba(182, 200, 213, .8);
+        --color-content-C: rgba(182, 200, 213, .5);
+        
+
+    /* --color-link
+        --color-link-hover
+        --color-link-active
+    */
+
+    --color-accent: #77202f;
+        --color-accent-hover : #B6C8D5;
+        --color-importance-A: #e75244;
+        --color-importance-B: #e7c144;
+        --color-importance-C: #449be7;
+        --color-importance-D: #7ae744;
+}
+
+/* 
+* {
+	scrollbar-width: thin;
+	scrollbar-color: var(--color-accent) transparent;
+    scrollbar-arrow-color: transparent;
+    scrollbar-face-color: blue;
+} */
+
+::-webkit-scrollbar {
+	width: .2rem;
+}
+
+::-webkit-scrollbar-track {
+	background-color: rgba(0, 0, 0, .1);
+    border-radius: .10rem;
+}
+
+::-webkit-scrollbar-thumb {
+	background-color: var(--color-accent);
+    border-radius: .10rem;
+}
+
+::-webkit-scrollbar-corner {
+    background-color: transparent; /* убираем базовый фон для областей с горизонтальной и вертикальной полосами прокрутки */
+}

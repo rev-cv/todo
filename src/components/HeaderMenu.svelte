@@ -4,17 +4,19 @@ import { page } from '../store/OpenPage'
 
 let menu = [
     ["/main", "frames"],
-    ["/timeline", "timeline"],
-    ["/day", "for-today"],
-    ["/projects", "projects"],
+    ["/day", "timeline"],
+    ["/queue", "queue"],
     ["/ideas", "ideas"],
+    ["/category", "category"],
+    ["/projects", "projects"],
     ["stretch"],
     ["/user", "user"],
 ]
 </script>
 
+
 <header>
-    {#each menu as item, index (index)}
+    {#each menu as item }
         {#if item[0] === "stretch"}
             <div class="stretch"></div>
         {:else}
@@ -60,7 +62,7 @@ let menu = [
 
         border-radius: .6em;
 
-        transition: 0.08s linear;
+        transition: 0.08s ease-out;
 
         border: .1em solid rgba(0, 0, 0, .2);
 

@@ -99,7 +99,7 @@ function changedate (arg = ".") {
         width: 2.4em;
         height: 2.4em;
 
-        transition: transform 100ms linear;
+        transition: transform 100ms ease-out;
     }
 
     .btn-back:hover, .btn-now:hover, .btn-next:hover, .btn-select-day:hover {

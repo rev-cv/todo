@@ -1,12 +1,26 @@
 <script>
+import "../reset.css";
+import "../style.css";
+
 import SvgSprite from '../components/SvgSprite.svelte';
 import HeaderMenu from '../components/HeaderMenu.svelte';
 import NewTask from '../components/NewTask.svelte';
 import NewProject from '../components/NewProject.svelte';
 import ChangeDate from '../components/ChangeDate.svelte';
+
+import TaskForDecade from '../components/TasksForDecade.svelte';
+
 import { page } from '../store/OpenPage'
 
 let isOpenNewProject = false;
+const TaskForSub = [
+    "day", 
+    "decade", 
+    // "month", 
+    "year"
+]
+let openedSubTaskFor = TaskForSub[0];
+
 </script>
 
 
@@ -23,29 +37,42 @@ let isOpenNewProject = false;
 
             <div class="header-page">
                 <h1>Main Page</h1>
+                <div class="stretch"></div>
             </div>
             <div class="content">Main Page</div>
-
-        {:else if $page === '/timeline'}
-
-            <div class="header-page">
-                <h1>Tasks with deadline</h1>
-                <ChangeDate />
-            </div>
-            <div class="content">Tasks with deadline</div>
 
         {:else if $page === '/day'}
 
             <div class="header-page">
-                <h1>Tasks for day</h1>
+                <h1>Tasks for </h1>
+
+                {#each TaskForSub as sub}
+                    <button
+                        on:click={e => {openedSubTaskFor = sub}}
+                        class={openedSubTaskFor === sub ? "btn-sub-task-for active" : "btn-sub-task-for"}
+                        >{sub}
+                    </button>
+                {/each}
+                
+                <div class="stretch"></div>
                 <ChangeDate />
             </div>
-            <div class="content">Tasks for day</div>
+
+            {#if openedSubTaskFor === 'day'}
+                <div class="content">Tasks for day</div>
+            {:else if openedSubTaskFor === 'decade'}
+                <div class="content"><TaskForDecade /></div>
+            {:else if openedSubTaskFor === 'month'}
+                <div class="content">Tasks for month</div>
+            {:else if openedSubTaskFor === 'year'}
+                <div class="content">Tasks for year</div>
+            {/if}
 
         {:else if $page === '/ideas'}
         
             <div class="header-page">
                 <h1>Task-Ideas</h1>
+                <div class="stretch"></div>
             </div>
             <div class="content">Task-Ideas</div>
             
@@ -53,6 +80,7 @@ let isOpenNewProject = false;
 
             <div class="header-page">
                 <h1>Projects</h1>
+                <div class="stretch"></div>
                 <button class="new-project" on:click={() => {isOpenNewProject = true}}>
                     <svg><use xlink:href="#ico-add"/></svg>
                     <span>New project</span>
@@ -67,25 +95,38 @@ let isOpenNewProject = false;
 
             <div class="header-page">
                 <h1>Setting</h1>
+                <div class="stretch"></div>
+            </div>
+            <div class="content">Setting</div>
+
+        {:else if $page === '/category'}
+
+            <div class="header-page">
+                <h1>Categories</h1>
+                <div class="stretch"></div>
+            </div>
+            <div class="content">Categories</div>
+
+        {:else if $page === '/queue'}
+
+            <div class="header-page">
+                <h1>Priority Queue</h1>
+                <div class="stretch"></div>
             </div>
             <div class="content">Setting</div>
             
         {/if}
 
-        <NewTask />
+        <!-- <NewTask /> -->
 
     </main>
 </div>
 
 
 <style global>
-    @import "../reset.css";
-    @import "../root.css";
 
     .layout {
         font-size: 1rem;
-        font-family: "Roboto", sans-serif;
-
 
         display: flex;
         height: 100vh;
@@ -104,6 +145,10 @@ let isOpenNewProject = false;
     .content {
         overflow: auto;
         flex-grow: 1;
+
+        display: flex;
+        flex-direction: column;
+        align-items: center;
     }
 
     .header-page {
@@ -129,13 +174,16 @@ let isOpenNewProject = false;
         font-weight: 700;
         font-size: 1.2em;
         opacity: .8;
+        margin-right: .3em;
+    }
+
+    .header-page > .stretch {
         flex-grow: 1;
     }
 
-
-    /* PROJECTS */
-    .new-project {
-        font-size: .8em;
+    .new-project, 
+    .btn-sub-task-for {
+        font-size: .9em;
         font-weight: 700;
 
         display: flex;
@@ -148,9 +196,11 @@ let isOpenNewProject = false;
 
         color: var(--color-content-B);
 
-        transition: 0.08s linear;
+        transition: 0.08s ease-out;
         height: 2.4em;
-        margin: .4em .6em;
+        margin: .4em;
+        
+        border: .1em solid rgba(0, 0, 0, .2);;
     }
 
     .new-project > svg {
@@ -159,12 +209,22 @@ let isOpenNewProject = false;
         margin-right: .5em;
     }
 
-    .new-project:hover {
+    .new-project:hover, 
+    .btn-sub-task-for:hover {
         transform: scale(1.05);
         box-shadow: var(--color-block-shadow);
     }
 
-    .new-project:active {
+    .new-project:active, 
+    .btn-sub-task-for:active {
         transform: scale(.9);
+    }
+
+    .btn-sub-task-for {
+        margin: .4em .2em;
+    }
+
+    .active {
+        background-color: var(--color-accent);
     }
 </style>

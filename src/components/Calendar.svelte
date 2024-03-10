@@ -133,7 +133,7 @@ function changeMonth (arg=".") {
         background-color: var(--color-block);
         border: .1em solid rgba(0, 0, 0, .2);
 
-        transition: 0.08s linear;
+        transition: 0.08s ease-out;
     }
 
     .btn-back > svg, .btn-next > svg {
@@ -181,7 +181,7 @@ function changeMonth (arg=".") {
 
         border-radius: .6em;
 
-        transition: 0.08s linear;
+        transition: 0.08s ease-out;
     }
 
     .day:hover, .btn-back:hover, .btn-next:hover {
