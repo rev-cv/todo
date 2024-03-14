@@ -164,6 +164,8 @@ let openedSubTaskFor = TaskForSub[0];
         box-shadow: var(--color-block-shadow-on-block);
 
         padding: .2em .2em .2em 1em;
+        
+        user-select: none;
     }
 
     .header-page > * {
