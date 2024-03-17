@@ -1,68 +1,75 @@
+
 <script>
-import { date, dayNames, shortMonthNames } from '../store/Date'
+import { decade, getDecOfMonth, getMonthByDec, getDecByDate } from '../store/Date'
 import Tulle from './Tulle.svelte'
-import Calendar from './Calendar.svelte'
+import Calendar from './CalendarDecades.svelte'
 
-let currentDate = new Date();
+let isOpenCalendarDecade = false;
 let isCurrentDate = true;
-let isOpenCalendar = false;
 
-// Подписываемся на обновления в сторе
-date.subscribe(value => {
-	currentDate = new Date(value);
-});
-
-function setIsCurrentDay () {
-    let today = new Date();
-    const isYear = today.getFullYear() === currentDate.getFullYear();
-    const isMonth = today.getMonth() === currentDate.getMonth();
-    const isDay = today.getDate() === currentDate.getDate();
-    isCurrentDate = (isYear && isMonth && isDay) ? true : false
+function setIsCurrentDec() {
+    const currentDec = getDecByDate(new Date());
+    if (currentDec[0] === $decade[0] && currentDec[1] === $decade[1]){
+        isCurrentDate = true;
+    } else {
+        isCurrentDate = false;
+    }
 }
 
-function changedate (arg = ".") {
-    
+function changedecade(arg="."){
+
     switch (arg) {
         case ".":
-            currentDate = new Date(); break;
+            decade.set(getDecByDate(new Date())); break;
         case "-": 
-            currentDate.setDate( currentDate.getDate() - 1 ); break;
+            const lastDec = $decade[1] - 1;
+            if (lastDec < 1) {
+                decade.set([$decade[0] - 1, 36])
+            } else {
+                decade.set([$decade[0], lastDec])
+            }
+            break;
         case "+": 
-            currentDate.setDate( currentDate.getDate() + 1 ); break;
+            const nextDec = $decade[1] + 1;
+            if (nextDec > 36) {
+                decade.set([$decade[0] + 1, 1])
+            } else {
+                decade.set([$decade[0], nextDec])
+            }
+            break;
     }
+    setIsCurrentDec()
 
-    setIsCurrentDay()
-    date.set(currentDate);
+    
 }
 </script>
 
 
-<button class="btn-back" on:click={() => changedate("-")}>
+<button class="btn-back" on:click={() => changedecade("-")}>
     <svg><use xlink:href="#ico-arrow"/></svg>
 </button>
 
-<button class="btn-select-day" on:click={() => {isOpenCalendar = true}}>
+<button class="btn-select-day" on:click={() => {isOpenCalendarDecade = true}}>
     <div class="date">
-        <div>{currentDate.getFullYear()},</div>
-        <div class="day-of-date">{currentDate.getDate()}</div>
-        <div>{shortMonthNames[currentDate.getMonth()]}</div>
+        <div>{$decade[0]},</div>
+        <div class="day-of-date">{getDecOfMonth($decade[1])}</div>
+        <div>{getMonthByDec($decade[1])}</div>
     </div>
-    <!-- <div class="dayweek">{dayNames[currentDate.getDay()]}</div> -->
 </button>
 
-<button class={`btn-now ${isCurrentDate?"is-current-day":""}`} on:click={() => changedate(".")}>
+<button class={`btn-now ${isCurrentDate?"is-current-day":""}`} on:click={() => changedecade(".")}>
     <svg><use xlink:href="#ico-arrow"/></svg>
 </button>
 
-<button class="btn-next" on:click={() => changedate("+")}>
+<button class="btn-next" on:click={() => changedecade("+")}>
     <svg><use xlink:href="#ico-arrow"/></svg>
 </button>
 
-{#if isOpenCalendar}
-    <Tulle on:closeDialog={() => {isOpenCalendar = false}} >
-        <Calendar on:changedate={() => {
-            isOpenCalendar = false;
-            setIsCurrentDay();
+{#if isOpenCalendarDecade}
+    <Tulle on:closeDialog={() => {isOpenCalendarDecade = false}} >
+        <Calendar on:changedecade={() => {
+            isOpenCalendarDecade = false;
+            setIsCurrentDec();
         }} />
     </Tulle>
 {/if}
@@ -70,9 +77,7 @@ function changedate (arg = ".") {
 
 <style>
 .btn-back, .btn-now, .btn-next, .btn-select-day {
-
     font-size: 1rem;
-
 
     background-color: var(--color-block);
     /* box-shadow: var(--color-block-shadow); */

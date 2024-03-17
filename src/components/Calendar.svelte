@@ -2,13 +2,7 @@
 <script>
 import { createEventDispatcher } from 'svelte';
 const dispatch = createEventDispatcher();
-import { date } from '../store/SelectDate'
-
-const monthNames = [
-  'January', 'February', 'March', 'April', 'May', 'June',
-  'July', 'August', 'September', 'October', 'November', 'December'
-];
-const shortDayNames = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+import { date, monthNames, shortDayNames } from '../store/Date'
 
 let cd = new Date();
 date.subscribe(value => {
@@ -82,7 +76,10 @@ function changeMonth (arg=".") {
         {/each}
         {#each monthDays as day}
             <button 
-                class={`${day === 0 ? "hidden" : "day"} ${cday === day && isCurrentMonth ? "active" : ""}`}
+                class={
+                    `${day === 0 ? "hidden" : "day"} 
+                    ${cday === day && isCurrentMonth ? "active" : ""}`
+                }
                 on:click={(event) => {
                     if (day === 0) return
                     date.set(new Date(year, month, day));
@@ -96,119 +93,119 @@ function changeMonth (arg=".") {
 
 
 <style>
-    .widget {
+.widget {
 
-        font-size: 1.2rem;
+    font-size: 1.2rem;
 
 
-        padding: 1em;
+    padding: 1em;
 
-        cursor: default;
+    cursor: default;
 
-        color: var(--color-content-B);
-        background-color: var(--color-block);
-        border-radius: .8em;
-        box-shadow: var(--color-block-shadow);
+    color: var(--color-content-B);
+    background-color: var(--color-block);
+    border-radius: .8em;
+    box-shadow: var(--color-block-shadow);
 
-        animation-name: open-widget;
-	    animation-duration: 200ms;
+    animation-name: open-widget;
+    animation-duration: 200ms;
+}
+
+.navigator {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.btn-back, .btn-next {
+    font-size: 1em;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    padding: .6em;
+
+    border-radius: .6em;
+    background-color: var(--color-block);
+    border: .1em solid rgba(0, 0, 0, .2);
+
+    transition: 0.08s ease-out;
+}
+
+.btn-back > svg, .btn-next > svg {
+    width: .8em;
+    height: .8em;
+}
+
+.btn-back > svg {
+    transform: rotate(90deg);
+}
+
+.btn-next > svg {
+    transform: rotate(-90deg);
+}
+
+.short-day {
+    font-size: .55em;
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
+    opacity: .55;
+}
+
+.calendar {
+    display: grid;
+    grid-template-columns: repeat(7, 2em);
+    grid-auto-rows: 2em;
+    grid-gap: .2em;
+
+    min-height: 15.2em;
+}
+
+.day {
+    margin: 1px;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    font-size: .8em;
+    color: var(--color-content-B);
+    background-color: transparent;
+
+    border: .1em solid rgba(0, 0, 0, .2);
+
+    border-radius: .6em;
+
+    transition: 0.08s ease-out;
+}
+
+.day:hover, .btn-back:hover, .btn-next:hover {
+    box-shadow: var(--color-block-shadow-on-block);
+    border: .1em solid rgba(0, 0, 0, 0);
+    transform: scale(1.05);
+}
+
+.day:active, .btn-back:active, .btn-next:active {
+    transform: scale(.9);
+}
+
+.hidden {
+    opacity: 0;
+    cursor: default;
+}
+
+.active {
+    background-color: var(--color-accent);
+}
+
+@keyframes open-widget {
+    from {  
+        transform: translate(5em, -5em) scale(.7);
     }
-
-    .navigator {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
+    to {
+        transform: translate(0,0) scale(1);
     }
-
-    .btn-back, .btn-next {
-        font-size: 1em;
-
-        display: flex;
-        justify-content: center;
-        align-items: center;
-
-        padding: .6em;
-
-        border-radius: .6em;
-        background-color: var(--color-block);
-        border: .1em solid rgba(0, 0, 0, .2);
-
-        transition: 0.08s ease-out;
-    }
-
-    .btn-back > svg, .btn-next > svg {
-        width: .8em;
-        height: .8em;
-    }
-
-    .btn-back > svg {
-        transform: rotate(90deg);
-    }
-
-    .btn-next > svg {
-        transform: rotate(-90deg);
-    }
-
-    .short-day {
-        font-size: .55em;
-        display: flex;
-        justify-content: center;
-        align-items: flex-end;
-        opacity: .55;
-    }
-
-    .calendar {
-        display: grid;
-        grid-template-columns: repeat(7, 2em);
-        grid-auto-rows: 2em;
-        grid-gap: .2em;
-
-        min-height: 15.2em;
-    }
-
-    .day {
-        margin: 1px;
-
-        display: flex;
-        justify-content: center;
-        align-items: center;
-
-        font-size: .8em;
-        color: var(--color-content-B);
-        background-color: transparent;
-
-        border: .1em solid rgba(0, 0, 0, .2);
-
-        border-radius: .6em;
-
-        transition: 0.08s ease-out;
-    }
-
-    .day:hover, .btn-back:hover, .btn-next:hover {
-        box-shadow: var(--color-block-shadow-on-block);
-        border: .1em solid rgba(0, 0, 0, 0);
-        transform: scale(1.05);
-    }
-
-    .day:active, .btn-back:active, .btn-next:active {
-        transform: scale(.9);
-    }
-
-    .hidden {
-        opacity: 0;
-        cursor: default;
-    }
-
-    .active {
-        background-color: var(--color-accent);
-    }
-
-    @keyframes open-widget {
-	    from {  
-            transform: translate(5em, -5em) scale(.7);
-        }
-        to {
-            transform: translate(0,0) scale(1);
-        }
-    }
+}
 </style>

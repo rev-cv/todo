@@ -7,6 +7,7 @@ import HeaderMenu from '../components/HeaderMenu.svelte';
 import NewTask from '../components/NewTask.svelte';
 import NewProject from '../components/NewProject.svelte';
 import ChangeDate from '../components/ChangeDate.svelte';
+import ChangeDecade from '../components/ChangeDecade.svelte';
 
 import TaskForDecade from '../components/TasksForDecade.svelte';
 
@@ -55,15 +56,23 @@ let openedSubTaskFor = TaskForSub[0];
                 {/each}
                 
                 <div class="stretch"></div>
-                <ChangeDate />
+
+                {#if openedSubTaskFor === 'day'}
+                    <ChangeDate />
+                {:else if openedSubTaskFor === 'decade'}
+                    <ChangeDecade />
+                {:else if openedSubTaskFor === 'year'}
+                    year
+                {/if}
+                
             </div>
 
             {#if openedSubTaskFor === 'day'}
                 <div class="content">Tasks for day</div>
             {:else if openedSubTaskFor === 'decade'}
                 <div class="content"><TaskForDecade /></div>
-            {:else if openedSubTaskFor === 'month'}
-                <div class="content">Tasks for month</div>
+            <!-- {:else if openedSubTaskFor === 'month'}
+                <div class="content">Tasks for month</div> -->
             {:else if openedSubTaskFor === 'year'}
                 <div class="content">Tasks for year</div>
             {/if}

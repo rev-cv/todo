@@ -8,7 +8,7 @@ let menu = [
     ["/queue", "queue"],
     ["/ideas", "ideas"],
     ["/category", "category"],
-    ["/projects", "projects"],
+    // ["/projects", "projects"],
     ["stretch"],
     ["/user", "user"],
 ]
