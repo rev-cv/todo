@@ -1,7 +1,7 @@
 <script>
 import { date, dayNames, shortMonthNames } from '../store/Date'
 import Tulle from './Tulle.svelte'
-import Calendar from './Calendar.svelte'
+import Calendar from './DialogCalendar.svelte'
 
 let currentDate = new Date();
 let isCurrentDate = true;

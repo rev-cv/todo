@@ -2,7 +2,7 @@
 <script>
 import { decade, getDecOfMonth, getMonthByDec, getDecByDate } from '../store/Date'
 import Tulle from './Tulle.svelte'
-import Calendar from './CalendarDecades.svelte'
+import Calendar from './DialogDecades.svelte'
 
 let isOpenCalendarDecade = false;
 let isCurrentDate = true;

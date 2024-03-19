@@ -5,7 +5,7 @@ const dispatch = createEventDispatcher();
 
 export let task = {
     "id": 2,
-    "name": "Исследование рынка",
+    "title": "Исследование рынка",
     "start": "2023-07-01",
     "finish": "2023-12-31",
     "finished": "2023-12-28",
@@ -48,7 +48,7 @@ if (task.deadline != ""){
         class="object-task"
         on:click={e => dispatch('openTask', {taskID})}
         >
-        <span>{task.name}</span>
+        <span>{task.title}</span>
     </button>
 
     <div class="deadline">
@@ -63,7 +63,6 @@ if (task.deadline != ""){
 .task {
     display: flex;
     align-items: center;
-    padding: .4em 0;
     position: relative;
     border-radius: .1em 1em 1em .1em;
     overflow: hidden;
@@ -77,7 +76,7 @@ if (task.deadline != ""){
     color: var(--color-content);
     background-color: transparent;
 
-    padding: 0 .4em;
+    padding: .4em;
     text-align: left;
 
     display: flex;
@@ -106,7 +105,6 @@ if (task.deadline != ""){
     margin-right: .4em;
 
     padding: 0 .2em;
-
     z-index: 2;
 
     border-radius: 50%;
@@ -138,6 +136,8 @@ if (task.deadline != ""){
     border-radius: .2em;
     margin-right: .6em;
     transition: height 300ms ease-out;
+    transform-origin: left;
+    margin-left: .2em;
 }
 
 .importance-1 {

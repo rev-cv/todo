@@ -1,13 +1,15 @@
 <script>
+// @ts-nocheck
+
 import { tasklist } from '../store/TestTaskList'
 import TaskItem from './TaskLineItem.svelte'
+import Tulle from './Tulle.svelte'
+import DialogTask from './DialogTask.svelte'
+
 
 let completed = 0;
-// @ts-ignore
-/**
- * @type {any[]}
- */
 let allCategories = [];
+let isJW = false;
 
 tasklist.subscribe(items => {
     let conterDone = 0;
@@ -25,7 +27,7 @@ tasklist.subscribe(items => {
     )
 });
 
-// @ts-ignore
+
 function changeStatus(taskid){
 
     tasklist.update(items => {
@@ -54,10 +56,12 @@ function changeStatus(taskid){
     });
 }
 
+
 const listSortBy = [
     "creation",  // по дате создания
     "deadline",  // по дедлайну
-    "name",      // по алфавиту
+    "title",      // по алфавиту
+    "importance",// по важности
 ]
 const listGrouptBy = [
     "not group",      // не группировать
@@ -69,7 +73,6 @@ const listGrouptBy = [
 
 let sortBy = listSortBy[0]
 let groupBy = listGrouptBy[2]
-
 
 function sortTaskList(arg="creation"){
 
@@ -86,21 +89,12 @@ function sortTaskList(arg="creation"){
                         const d1 = Date.parse(a.deadline);
                         const d2 = Date.parse(b.deadline);
                         return d1 - d2
-
-                        // // @ts-ignore
-                        // if (d2.isNaN()){
-                        //     return -1
-                        // // @ts-ignore
-                        // } else if (d1.isNaN()) {
-                        //     return 1
-                        // } else {
-                        //     return d1 - d2
-                        // }
                     }); break;
-                case "name":
+
+                case "title":
                     sortedTasklist.sort((a, b) => {
-                        const nameA = a.name.toUpperCase();
-                        const nameB = b.name.toUpperCase();
+                        const nameA = a.title.toUpperCase();
+                        const nameB = b.title.toUpperCase();
                         if (nameA < nameB) {
                             return -1;
                         } else if (nameA > nameB) {
@@ -109,6 +103,21 @@ function sortTaskList(arg="creation"){
                             return 0;
                         }
                     }); break;
+
+                case "importance":
+                    const d = [1, 2, 3, 0]
+                    sortedTasklist.sort((a, b) => {
+                        const ia = d.indexOf(a.importance);
+                        const ib = d.indexOf(b.importance);
+                        if (ia < ib) {
+                            return -1;
+                        } else if (ia > ib) {
+                            return 1; 
+                        } else {
+                            return 0;
+                        }
+                    }); break;
+
                 default: // creation
                     sortedTasklist.sort((a, b) => (a.id - b.id)); break;
             }
@@ -117,16 +126,25 @@ function sortTaskList(arg="creation"){
     });
 }
 
-// @ts-ignore
+let openedTask = {};
+
 function openTask(taskid){
-
+    const indexTask = $tasklist.findIndex(
+        item => item.id === taskid.detail.taskID
+    );
+    openedTask = $tasklist[indexTask]
 }
-
 </script>
 
 <div class="control-panel">
     <!-- <div class="select-decade">June, Ⅱ</div> -->
     <div class="completed">{`completed by ${completed}%`}</div>
+
+    <button 
+        class={ isJW ? "just-waiting active" : "just-waiting"}
+        on:click={e => isJW = isJW ? false : true }
+        >just waiting
+    </button>
 
     <div class="dropdown">
         <div class="dd-content">
@@ -152,7 +170,11 @@ function openTask(taskid){
         <div class="dd-menu">
             {#each listGrouptBy as item }
                 {#if item != groupBy}
-                    <button on:click={e => groupBy = item}>{item}</button>
+                    <button on:click={e => {
+                        groupBy = item
+                        if (item === "status")
+                            isJW = false
+                    }}>{item}</button>
                 {/if}
             {/each}
         </div>
@@ -166,7 +188,7 @@ function openTask(taskid){
 
     {#if groupBy === "not group"}
 
-        {#each $tasklist as task }
+        {#each isJW ? $tasklist.filter(t => t.status === "wait") : $tasklist as task }
             <TaskItem 
                 task={task} 
                 on:changeStatus={changeStatus}
@@ -180,7 +202,8 @@ function openTask(taskid){
     {:else if groupBy === "category"}
         {#each allCategories as cat }
             <div class="group"># {cat}</div>
-            {#each $tasklist as task }
+
+            {#each isJW ? $tasklist.filter(t => t.status === "wait") : $tasklist as task }
                 {#if cat === task.category}
                     <TaskItem 
                         task={task} 
@@ -202,7 +225,7 @@ function openTask(taskid){
             ["Failed", "fail"]] as group }
 
             <div class="group">{group[0]}</div>
-            {#each $tasklist as task }
+            {#each isJW ? $tasklist.filter(t => t.status === "wait") : $tasklist as task }
                 {#if task.status === group[1]}
                     <TaskItem 
                         task={task} 
@@ -234,15 +257,16 @@ function openTask(taskid){
             {/each} 
         {/each}
     {/if}
-
-
-
-
-
 </div>
 
 
-
+{#if Object.keys(openedTask).length > 0}
+    <Tulle on:closeDialog={() => {openedTask = {}}} >
+        <DialogTask 
+            task={openedTask}
+            on:changedecade={() => {}} />
+    </Tulle>
+{/if}
 
 <style>
 
@@ -256,6 +280,7 @@ function openTask(taskid){
 
 .task-list {
     width: 28em;
+    margin-bottom: 5em;
 }
 
 .completed {
@@ -381,14 +406,27 @@ function openTask(taskid){
     transform: rotate(-180deg);
 } 
 
-
 .group {
     font-size: 1em;
     font-weight: 700;
     padding: 1em 0 .2em .2em;
     margin-bottom: .5em;
-    /* background-color: yellowgreen; */
     border-bottom: .1em solid var(--color-content-C);
+    user-select: none;
 }
+
+.just-waiting {
+    background-color: transparent;
+    font-size: 1em;
+    margin-right: 1em;
+    padding: .6em 1em;
+    border-radius: .6em;
+    color: var(--color-content-B);
+}
+
+.just-waiting.active {
+    background-color: var(--color-accent);
+}
+
 </style>
 

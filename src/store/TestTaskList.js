@@ -2,7 +2,7 @@ import {writable} from 'svelte/store';
 export const tasklist = writable([
     {
         "id": 1,
-        "name": "Проектш Alpha",
+        "title": "Проектш Alpha",
         "start": "2023-05-15",
         "finish": "2023-09-30",
         "finished": "2023-12-28",
@@ -13,7 +13,7 @@ export const tasklist = writable([
     },
     {
         "id": 2,
-        "name": "w".repeat(50),
+        "title": "w".repeat(50),
         "start": "2023-07-01",
         "finish": "2023-12-31",
         "finished": "2023-12-28",
@@ -24,7 +24,7 @@ export const tasklist = writable([
     },
     {
         "id": 3,
-        "name": "Обновление инфраштруктуры",
+        "title": "Обновление инфраштруктуры",
         "start": "2023-03-01",
         "finish": "2023-07-15",
         "finished": "",
@@ -35,7 +35,7 @@ export const tasklist = writable([
     },
     {
         "id": 4,
-        "name": "Исследование рынка",
+        "title": "Исследование рынка",
         "start": "2023-09-01",
         "finish": "2023-11-30",
         "finished": "",
@@ -46,7 +46,7 @@ export const tasklist = writable([
     },
     {
         "id": 5,
-        "name": "Тренинг для сотрудников",
+        "title": "Тренинг для сотрудников",
         "start": "2023-06-01",
         "finish": "2023-06-30",
         "finished": "",
@@ -57,7 +57,7 @@ export const tasklist = writable([
     },
     {
         "id": 6,
-        "name": "Разработка мобильного приложения",
+        "title": "Разработка мобильного приложения",
         "start": "2023-04-01",
         "finish": "2023-10-31",
         "finished": "2023-12-28",
@@ -68,7 +68,7 @@ export const tasklist = writable([
     },
     {
         "id": 7,
-        "name": "Запуск рекламной кампании",
+        "title": "Запуск рекламной кампании",
         "start": "2023-08-15",
         "finish": "2023-11-15",
         "finished": "",
@@ -79,7 +79,7 @@ export const tasklist = writable([
     },
     {
         "id": 8,
-        "name": "Модернизация серверов",
+        "title": "Модернизация серверов",
         "start": "2023-02-01",
         "finish": "2023-05-31",
         "finished": "",
@@ -90,7 +90,7 @@ export const tasklist = writable([
     },
     {
         "id": 9,
-        "name": "Анализ конкурентов",
+        "title": "Анализ конкурентов",
         "start": "2023-07-01",
         "finish": "2023-09-30",
         "finished": "",
@@ -101,7 +101,7 @@ export const tasklist = writable([
     },
     {
         "id": 10,
-        "name": "Курс по продажам",
+        "title": "Курс по продажам",
         "start": "2023-08-01",
         "finish": "2023-08-31",
         "finished": "",
@@ -112,7 +112,7 @@ export const tasklist = writable([
     },
     {
         "id": 11,
-        "name": "Проект Beta",
+        "title": "Проект Beta",
         "start": "2023-06-01",
         "finish": "2023-11-30",
         "finished": "",
@@ -123,7 +123,7 @@ export const tasklist = writable([
     },
     {
         "id": 12,
-        "name": "Продвижение в социальных сетях",
+        "title": "Продвижение в социальных сетях",
         "start": "2023-09-01",
         "finish": "2023-12-31",
         "finished": "2023-12-28",
@@ -134,7 +134,7 @@ export const tasklist = writable([
     },
     {
         "id": 13,
-        "name": "Внедрение системы безопасности",
+        "title": "Внедрение системы безопасности",
         "start": "2023-04-01",
         "finish": "2023-07-31",
         "finished": "",
@@ -145,7 +145,7 @@ export const tasklist = writable([
     },
     {
         "id": 14,
-        "name": "Опрос клиентов",
+        "title": "Опрос клиентов",
         "start": "2023-10-01",
         "finish": "2023-11-15",
         "finished": "",
@@ -156,7 +156,7 @@ export const tasklist = writable([
     },
     {
         "id": 15,
-        "name": "Тренинг по эффективным коммуникациям",
+        "title": "Тренинг по эффективным коммуникациям",
         "start": "2023-07-01",
         "finish": "2023-07-31",
         "finished": "",
@@ -167,7 +167,7 @@ export const tasklist = writable([
     },
     {
         "id": 16,
-        "name": "Проект Gamma",
+        "title": "Проект Gamma",
         "start": "2023-03-01",
         "finish": "2023-09-30",
         "finished": "",
@@ -178,7 +178,7 @@ export const tasklist = writable([
     },
     {
         "id": 17,
-        "name": "Запуск email-рассылки",
+        "title": "Запуск email-рассылки",
         "start": "2023-06-01",
         "finish": "2023-08-31",
         "finished": "",
@@ -189,7 +189,7 @@ export const tasklist = writable([
     },
     {
         "id": 18,
-        "name": "Обновление сетевого оборудования",
+        "title": "Обновление сетевого оборудования",
         "start": "2023-05-01",
         "finish": "2023-08-15",
         "finished": "",
@@ -200,7 +200,7 @@ export const tasklist = writable([
     },
     {
         "id": 19,
-        "name": "Анализ удовлетворенности клиентов",
+        "title": "Анализ удовлетворенности клиентов",
         "start": "2023-11-01",
         "finish": "2023-12-31",
         "finished": "2023-12-28",
@@ -211,7 +211,7 @@ export const tasklist = writable([
     },
     {
         "id": 20,
-        "name": "Тренинг по управлению временем",
+        "title": "Тренинг по управлению временем",
         "start": "2023-09-01",
         "finish": "2023-09-30",
         "finished": "",
@@ -222,7 +222,7 @@ export const tasklist = writable([
     },
     {
         "id": 21,
-        "name": "Проект Delta",
+        "title": "Проект Delta",
         "start": "2023-07-01",
         "finish": "2024-02-28",
         "finished": "",
@@ -233,7 +233,7 @@ export const tasklist = writable([
     },
     {
         "id": 22,
-        "name": "Организация выставки",
+        "title": "Организация выставки",
         "start": "2023-10-01",
         "finish": "2023-11-30",
         "finished": "",
@@ -244,7 +244,7 @@ export const tasklist = writable([
     },
     {
         "id": 23,
-        "name": "Развертывание облачной инфраструктуры",
+        "title": "Развертывание облачной инфраструктуры",
         "start": "2023-06-01",
         "finish": "2023-10-31",
         "finished": "",
@@ -255,7 +255,7 @@ export const tasklist = writable([
     },
     {
         "id": 24,
-        "name": "Изучение потребительских предпочтений",
+        "title": "Изучение потребительских предпочтений",
         "start": "2023-08-01",
         "finish": "2023-10-15",
         "finished": "2023-12-28",
@@ -266,7 +266,7 @@ export const tasklist = writable([
     },
     {
         "id": 25,
-        "name": "Тренинг по лидерству",
+        "title": "Тренинг по лидерству",
         "start": "2023-11-01",
         "finish": "2023-11-30",
         "finished": "",
@@ -277,7 +277,7 @@ export const tasklist = writable([
     },
     {
         "id": 26,
-        "name": "Тренинг по управлению временем",
+        "title": "Тренинг по управлению временем",
         "start": "2023-09-01",
         "finish": "2023-09-30",
         "finished": "",
@@ -288,7 +288,7 @@ export const tasklist = writable([
     },
     {
         "id": 27,
-        "name": "Проект Delta",
+        "title": "Проект Delta",
         "start": "2023-07-01",
         "finish": "2024-02-28",
         "finished": "",
@@ -299,7 +299,7 @@ export const tasklist = writable([
     },
     {
         "id": 28,
-        "name": "Организация выставки",
+        "title": "Организация выставки",
         "start": "2023-10-01",
         "finish": "2023-11-30",
         "finished": "",
@@ -310,7 +310,7 @@ export const tasklist = writable([
     },
     {
         "id": 29,
-        "name": "Развертывание облачной инфраструктуры",
+        "title": "Развертывание облачной инфраструктуры",
         "start": "2023-06-01",
         "finish": "2023-10-31",
         "finished": "",
@@ -321,7 +321,7 @@ export const tasklist = writable([
     },
     {
         "id": 30,
-        "name": "Изучение потребительских предпочтений",
+        "title": "Изучение потребительских предпочтений",
         "start": "2023-08-01",
         "finish": "2023-10-15",
         "finished": "2023-12-28",
@@ -332,7 +332,7 @@ export const tasklist = writable([
     },
     {
         "id": 31,
-        "name": "Тренинг по лидерству",
+        "title": "Тренинг по лидерству",
         "start": "2023-11-01",
         "finish": "2023-11-30",
         "finished": "",
