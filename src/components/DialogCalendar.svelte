@@ -3,6 +3,7 @@
 import { createEventDispatcher } from 'svelte';
 const dispatch = createEventDispatcher();
 import { date, monthNames, shortDayNames } from '../store/Date'
+import { isOpenDialog } from '../store/OpenDialog'
 
 let cd = new Date();
 date.subscribe(value => {
@@ -57,7 +58,7 @@ function changeMonth (arg=".") {
 
 <!-- svelte-ignore a11y-no-static-element-interactions -->
 <!-- svelte-ignore a11y-click-events-have-key-events -->
-<div class="widget" on:click|stopPropagation>
+<div class={$isOpenDialog ? "widget" : "widget closing"} on:click|stopPropagation>
     <div class="navigator">
         <button class="btn-back" on:click={event => changeMonth("-")}>
             <svg><use xlink:href="#ico-arrow"/></svg>
@@ -200,12 +201,28 @@ function changeMonth (arg=".") {
     background-color: var(--color-accent);
 }
 
+.closing {
+    animation-name: close-widget;
+    animation-duration: 200ms;
+    animation-fill-mode: both;
+}
+
 @keyframes open-widget {
     from {  
         transform: translate(5em, -5em) scale(.7);
     }
     to {
         transform: translate(0,0) scale(1);
+    }
+}
+
+@keyframes close-widget {
+    from {  
+        transform: translate(0,0) scale(1);
+    }
+    to {
+        transform: translate(5em, -7em) scale(.7);
+        opacity: 0;
     }
 }
 </style>

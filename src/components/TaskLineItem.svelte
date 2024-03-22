@@ -107,8 +107,8 @@ if (task.deadline != ""){
     padding: 0 .2em;
     z-index: 2;
 
-    border-radius: 50%;
-    border: .1em solid var(--color-content-B);
+    border-radius: .3em;
+    border: .14em solid var(--color-content-B);
 
     width: 1em;
     height: 1em;
@@ -237,13 +237,13 @@ if (task.deadline != ""){
     color: red;
 }
 
-.wait > .importance {
+/* .wait > .importance {
     transition: transform 300ms ease-out 200ms;
 }
 
 .wait:hover > .importance {
     transform: scale(1.5);
-}
+} */
 
 .task::after {
     content: "";

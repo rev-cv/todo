@@ -1,5 +1,6 @@
 <script>
 import { decade, shortMonthNames } from '../store/Date'
+import { isOpenDialog } from '../store/OpenDialog'
 import { createEventDispatcher } from 'svelte';
 const dispatch = createEventDispatcher();
 let selectYear = $decade[0];
@@ -7,7 +8,7 @@ let selectYear = $decade[0];
 
 <!-- svelte-ignore a11y-no-static-element-interactions -->
 <!-- svelte-ignore a11y-click-events-have-key-events -->
-<div class="widget" on:click|stopPropagation>
+<div class={$isOpenDialog ? "widget" : "widget closing"} on:click|stopPropagation>
     <div class="navigator">
         <button class="btn-back" on:click={e => --selectYear}>
             <svg><use xlink:href="#ico-arrow"/></svg>
@@ -146,12 +147,28 @@ transform: rotate(-90deg);
     background-color: var(--color-accent);
 }
 
+.closing {
+    animation-name: close-widget;
+    animation-duration: 200ms;
+    animation-fill-mode: both;
+}
+
 @keyframes open-widget {
     from {  
-        transform: translate(5em, -5em) scale(.7);
+        transform: translate(5em, -7em) scale(.7);
     }
     to {
         transform: translate(0,0) scale(1);
+    }
+}
+
+@keyframes close-widget {
+    from {  
+        transform: translate(0,0) scale(1);
+    }
+    to {
+        transform: translate(5em, -7em) scale(.7);
+        opacity: 0;
     }
 }
 </style>

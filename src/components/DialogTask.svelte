@@ -1,17 +1,19 @@
 <script>
 // @ts-nocheck
+import { isOpenDialog } from '../store/OpenDialog'
 
-export let task = {
-    "id": 2,
-    "title": "Исследование рынка",
-    "start": "2023-07-01",
-    "finish": "2023-12-31",
-    "finished": "2023-12-28",
-    "deadline": "2024-03-12 15:15",
-    "category": "Маркетинг",
-    "status": "done",
-    "importance": 1,
-}
+export let task = {}
+// {
+//     "id": 2,
+//     "title": "Исследование рынка",
+//     "start": "2023-07-01",
+//     "finish": "2023-12-31",
+//     "finished": "2023-12-28",
+//     "deadline": "2024-03-12 15:15",
+//     "category": "Маркетинг",
+//     "status": "done",
+//     "importance": 1,
+// }
 
 let status = task.status;
 let importance = task.importance;
@@ -22,23 +24,14 @@ let [date, time] = task.deadline.split(" ");
 
 <!-- svelte-ignore a11y-no-static-element-interactions -->
 <!-- svelte-ignore a11y-click-events-have-key-events -->
-<div class="widget" on:click|stopPropagation>
+<div class={$isOpenDialog ? "widget" : "widget closing"} on:click|stopPropagation >
 
-    <!-- <div class="mark">Execution status</div> -->
-    <div class="status-panel">
-        {#each ["wait", "done", "fail"] as cst }
-            <button 
-                class={status === cst ? `${cst} active` : cst}
-                on:click={e => status = cst}
-                >{cst}
-            </button>
-        {/each}
-    </div>
 
     <div class="mark">Title</div>
     <div class="title">
         <input type="text" value={task.title}>
     </div>
+
 
     <div class="mark">Importance</div>
     <div class="importance">
@@ -51,8 +44,21 @@ let [date, time] = task.deadline.split(" ");
         {/each}
     </div>
 
+
+    <div class="mark">Status</div>
+    <div class="status-panel">
+        {#each ["wait", "done", "fail"] as cst }
+            <button 
+                class={status === cst ? `${cst} active` : cst}
+                on:click={e => status = cst}
+                >{cst}
+            </button>
+        {/each}
+    </div>
+    
+
     <div class="mark">Category</div>
-    <div class="categories">{category}</div>
+    <div class="categories">{`# ${category}`}</div>
 
     <div class="mark">Deadline</div>
     <div class="categories">
@@ -80,12 +86,28 @@ let [date, time] = task.deadline.split(" ");
     animation-duration: 200ms;
 }
 
+.closing {
+    animation-name: close-widget;
+    animation-duration: 200ms;
+    animation-fill-mode: both;
+}
+
 @keyframes open-widget {
     from {  
-        transform: translate(0, -5em) scale(.7);
+        transform: translate(0, -3em) scale(.7);
     }
     to {
         transform: translate(0,0) scale(1);
+    }
+}
+
+@keyframes close-widget {
+    from {  
+        transform: translate(0,0) scale(1);
+    }
+    to {
+        transform: translate(0, -3em) scale(.7);
+        opacity: 0;
     }
 }
 
