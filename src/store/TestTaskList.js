@@ -1,3 +1,5 @@
+// @ts-nocheck
+
 import {writable} from 'svelte/store';
 export const tasklist = writable([
     {
@@ -342,3 +344,12 @@ export const tasklist = writable([
         "importance": 3,
     }
 ]);
+
+
+export let allCategories = [];
+tasklist.subscribe(items => {
+    items.forEach(item => {
+        if (!allCategories.includes(item.category))
+            allCategories.push(item.category)
+    })
+});

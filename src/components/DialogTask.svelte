@@ -1,6 +1,7 @@
 <script>
 // @ts-nocheck
 import { isOpenDialog } from '../store/OpenDialog'
+import { allCategories } from '../store/TestTaskList'
 
 export let task = {}
 // {
@@ -20,6 +21,10 @@ let importance = task.importance;
 let category = task.category;
 let [date, time] = task.deadline.split(" ");
 
+let isOpenDeadline = false;
+let isOpenCategories = false;
+let isOpenAddition = false;
+
 </script>
 
 <!-- svelte-ignore a11y-no-static-element-interactions -->
@@ -27,50 +32,164 @@ let [date, time] = task.deadline.split(" ");
 <div class={$isOpenDialog ? "widget" : "widget closing"} on:click|stopPropagation >
 
 
-    <div class="mark">Title</div>
-    <div class="title">
-        <input type="text" value={task.title}>
-    </div>
+    <div class="main-area">
+
+        <div class="mark">Title</div>
+        <div class="title">
+            <input type="text" value={task.title}>
+        </div>
 
 
-    <div class="mark">Importance</div>
-    <div class="importance">
-        {#each [["A", 1], ["B", 2], ["C", 3], ["×", 0]] as imp }
-            <button 
-                class={importance === imp[1] ? `imp-${imp[1]} active` : `imp-${imp[1]}`}
-                on:click={e => importance = imp[1]}
-                >{imp[0]}
+        <div class="mark">Importance</div>
+        <div class="importance">
+            {#each [["A", 1], ["B", 2], ["C", 3], ["×", 0]] as imp }
+                <button 
+                    class={importance === imp[1] ? `imp-${imp[1]} active` : `imp-${imp[1]}`}
+                    on:click={e => importance = imp[1]}
+                    >{imp[0]}
+                </button>
+            {/each}
+        </div>
+
+
+        <div class="mark">Status</div>
+        <div class="status-panel">
+            {#each ["wait", "done", "fail"] as cst }
+                <button 
+                    class={status === cst ? `${cst} active` : cst}
+                    on:click={e => status = cst}
+                    >{cst}
+                </button>
+            {/each}
+        </div>
+        
+
+        <div class="mark">Category</div>
+        <div class="categories">
+            <button
+                on:click={e => {
+                    isOpenCategories = true;
+                    isOpenAddition = true;
+                }}
+                >{`# ${category}`}
             </button>
-        {/each}
-    </div>
+        </div>
 
+        <!-- <div class="mark">Deadline</div>
+        <div class="categories">
+            <input type="date" value={date}>
+            <input type="time" value={time}>
+        </div> -->
 
-    <div class="mark">Status</div>
-    <div class="status-panel">
-        {#each ["wait", "done", "fail"] as cst }
-            <button 
-                class={status === cst ? `${cst} active` : cst}
-                on:click={e => status = cst}
-                >{cst}
+        <div class="mark">Deadline</div>
+        <div class="deadline">
+            <button><div>×</div></button>
+            <button><div>today</div></button>
+            <button><div>next<br>day</div></button>
+            <button
+                on:click={e => {
+                    isOpenDeadline = true;
+                    isOpenAddition = true;
+                }}
+                ><div>2024-05-26 15:25</div>
             </button>
-        {/each}
-    </div>
-    
+        </div>
 
-    <div class="mark">Category</div>
-    <div class="categories">{`# ${category}`}</div>
-
-    <div class="mark">Deadline</div>
-    <div class="categories">
-        <input type="date" value={date}>
-        <input type="time" value={time}>
     </div>
+
+    <div 
+        class={
+            isOpenAddition ? 
+                "additional-area" : "additional-area additional-area-closed"
+        }>
+
+        {#if isOpenDeadline }
+            <div class="deadline-select">
+                <div class="col-y col-mark">year</div>
+                <div class="col-m col-mark">month</div>
+                <div class="col-d col-mark">day</div>
+                <div class="col-ho col-mark">hour</div>
+                <div class="col-mi col-mark">minute</div>
+
+                <div class="col-y">
+                    {#each Array(15).fill().map((_, i) => i + 2024) as year }
+                        <button>{year}</button>
+                    {/each}
+                </div>
+
+                <div class="col-m">
+                    {#each Array(12).fill().map((_, i) => i + 1) as month }
+                        <button>{month}</button>
+                    {/each}
+                </div>
+
+                <div class="col-d">
+                    {#each Array(31).fill().map((_, i) => i + 1) as day }
+                        <button>{day}</button>
+                    {/each}
+                </div>
+
+                <div class="col-ho">
+                    <button>×</button>
+                    {#each Array(24).fill().map((_, i) => i) as hour }
+                        <button>{hour}</button>
+                    {/each}
+                </div>
+
+                <div class="col-mi">
+                    {#each Array(12).fill().map((_, i) => i * 5) as minute }
+                        <button>{minute}</button>
+                    {/each}
+                </div>
+
+                <div class="set-deadline">
+                    <button
+                        on:click={e => {
+                            isOpenAddition = false;
+                            setTimeout(() => {
+                                isOpenDeadline = false;
+                            }, 300)
+                        }}
+                        >set deadline 2024-05-12 15:45
+                    </button>
+                </div>
+            </div>
+        {/if}
+
+
+        {#if isOpenCategories }
+            <div class="category-list">
+                {#each allCategories as item }
+                    <button
+                        on:click={e => {
+                            isOpenAddition = false;
+                            category = item;
+                            setTimeout(() => {
+                                isOpenCategories = false;
+                            }, 300)
+                        }}
+                        >{`# ${item}`}
+                    </button>
+                {/each}
+            </div>
+        {/if}
+
+    </div>
+
 
 </div>
 
 <style>
 
 .widget {
+    display: flex;
+
+    animation-name: open-widget;
+    animation-duration: 200ms;
+}
+
+.main-area,
+.additional-area {
     font-size: 1.2rem;
 
     padding: 1em;
@@ -82,8 +201,23 @@ let [date, time] = task.deadline.split(" ");
     border-radius: .8em;
     box-shadow: var(--color-block-shadow);
 
-    animation-name: open-widget;
-    animation-duration: 200ms;
+    width: 20em;
+    height: 20em;
+
+    display: flex;
+    flex-direction: column;
+
+    overflow: hidden;
+}
+
+.additional-area {
+    position: absolute;
+    transform-origin: bottom;
+    transition: transform 200ms ease-out;
+}
+
+.additional-area-closed {
+    transform: scaleY(0);
 }
 
 .closing {
@@ -132,16 +266,25 @@ let [date, time] = task.deadline.split(" ");
 .title > input {
     flex-grow: 1;
     font-size: 1.2em;
-    padding: .4em;
+    padding: .6em .4em .4em .6em;
     background-color: transparent;
     color: var(--color-content-A);
     font-weight: 700;
+    border-radius: .6em;
+    transition: box-shadow 500ms ease-out;
 }
 
+.title > input:focus {
+    box-shadow: var(--color-block-shadow-inset);
+}
+
+.categories,
 .status-panel, 
-.importance {
-    display: flex;
-    justify-content: space-between;
+.importance,
+.deadline {
+    display: grid;
+    grid-auto-rows: 2.5em;
+    grid-gap: .3em;
 
     font-size: .7em;
     margin: .4em 0;
@@ -152,29 +295,76 @@ let [date, time] = task.deadline.split(" ");
     transition: border-color 200ms ease-out;
 }
 
-/* .status-panel:hover, 
-.importance:hover {
-    border-color: var(--color-content-C);
-} */
+.importance {
+    grid-template-columns: repeat(4, 1fr);
+}
 
+.status-panel {
+    grid-template-columns: repeat(3, 1fr);
+}
 
+.categories {
+    grid-template-columns: 1fr;
+    grid-auto-rows: 2.8em;
+}
+
+.deadline {
+    grid-template-columns: 3em 3em 3em 1fr;
+    grid-auto-rows: 3em;
+}
+
+.categories > button,
 .status-panel > button,
-.importance > button {
+.importance > button,
+.deadline > button {
     font-size: 1em;
-    flex-grow: 1;
     user-select: none;
-    margin: .2em;
-    padding: .5em;
-    border-radius: .6em;
 
-    display: flex;
-    justify-content: center;
-    align-self: center;
+    position: relative;
+    overflow: hidden;
 
     background-color: transparent;
     color: var(--color-content-B);
 
+    border: .14em solid var(--color-content-C);
+    border-radius: .6em;
+
     transition: background-color 500ms ease-out;
+}
+
+.categories > button {
+    text-align: left;
+    padding: .2em 0 0 1em;
+}
+
+.categories > button::after,
+.status-panel > button::after,
+.importance > button::after,
+.deadline > button::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    background-color: var(--color-content-C);
+
+    opacity: 0;
+    transition: opacity 200ms ease-out;
+}
+
+.categories > button:hover::after,
+.status-panel > button:hover::after,
+.importance > button:hover::after,
+.deadline > button:hover::after {
+    opacity: .3;
+}
+
+.deadline > button > div {
+    font-size: clamp(.2em, 1.5em, .74em);
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
 }
 
 .wait.active,
@@ -209,17 +399,110 @@ let [date, time] = task.deadline.split(" ");
     background-color: var(--color-importance-X);
 }
 
-.categories {
+
+
+.category-list {
     display: flex;
-    justify-content: space-between;
+    flex-direction: column;
+
+    height: 100%;
+    
+    overflow-y: auto;
 }
 
-.categories > input {
-    font-size: 1em;
-    padding: .4em;
+.category-list > button {
+    font-size: .7em;
+    text-align: left;
     background-color: transparent;
-    color: var(--color-content-A);
-    filter: invert(0.5);
+    color: var(--color-content-B);
+    border-radius: .4em;
+    border: .14em solid var(--color-content-C);
+    margin: .2em;
+    padding: .4em;
+    border-radius: .4em;
+}
+
+.deadline-select {
+    display: grid;
+    grid-template-columns: 2fr repeat(5, 1fr);
+    grid-auto-flow: dense;
+    justify-content: center;
+    align-content: center;
+    gap: .2em;
+    height: 100%;
+}
+
+.col-y {
+    grid-column: 1 / 2;
+}
+
+.col-m {
+    grid-column: 2 / 3;
+}
+
+.col-d {
+    grid-column: 3 / 4;
+}
+
+.col-ho {
+    grid-column: 5 / 6;
+}
+
+.col-mi {
+    grid-column: 6 / 7;
+}
+
+.set-deadline {
+    grid-column: 1 / -1;
+    justify-self: center;
+    padding-top: .5em;
+}
+
+.col-y, .col-m, .col-d, .col-ho, .col-mi {
+    display: flex;
+    flex-direction: column;
+    overflow: auto;
+}
+
+.deadline-select button {
+    font-size: .7em;
+    background-color: transparent;
+    color: var(--color-content-B);
+    margin: .2em;
+    border-radius: .4em;
+    border: .14em solid var(--color-content-C);
+    padding: .4em;
+    position: relative;
+}
+
+.deadline-select > div > button::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    background-color: var(--color-content-C);
+
+    opacity: 0;
+    transition: opacity 200ms ease-out;
+}
+
+.deadline-select > div >  button:hover::after {
+    opacity: .3;
+}
+
+.col-mark {
+    margin: 1em 0 .5em 0;
+    font-size: .5em;
+    font-weight: 700;
+    opacity: .5;
+    user-select: none;
+    text-align: center;
+}
+
+.set-deadline > button {
+    padding: .6em;
 }
 
 </style>
