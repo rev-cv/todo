@@ -16,19 +16,20 @@ export let task = {
 }
 
 let taskID = task.id;
-let taskDeadline = "·";
 
-if (task.deadline != ""){
+
+function getDeadline () {
     const d = new Date(task.deadline);
+    const [date, time] = task.deadline.split(" ");
 
-    taskDeadline = `${d.getDate()} ${shortMonthNames[d.getMonth()]}`
+    let taskDeadline = `${d.getDate()} ${shortMonthNames[d.getMonth()]}`
 
-    const th = d.getHours()
-    const tm = d.getMinutes()
-
-    if (th != 0 || tm != 0) {
-        taskDeadline += ` ${th}:${tm}`
+    if (time != undefined) {
+        const th = d.getHours()
+        const tm = d.getMinutes()
+        taskDeadline += ` ${String(th).padStart(2, '0')}:${String(tm).padStart(2, '0')}`
     }
+    return taskDeadline
 }
 </script>
 
@@ -52,7 +53,7 @@ if (task.deadline != ""){
     </button>
 
     <div class="deadline">
-        {taskDeadline}
+        { task.deadline != "" ? getDeadline() : "" }
     </div>
 
 </div>

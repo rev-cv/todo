@@ -8,7 +8,7 @@ export const tasklist = writable([
         "start": "2023-05-15",
         "finish": "2023-09-30",
         "finished": "2023-12-28",
-        "deadline": "2024-05-12 15:15",
+        "deadline": "",
         "category": "Разработка ПО",
         "status": "done",
         "importance": 1,

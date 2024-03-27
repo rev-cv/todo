@@ -1,9 +1,18 @@
 <script>
 // @ts-nocheck
+import { onDestroy } from 'svelte';
 import { isOpenDialog } from '../store/OpenDialog'
-import { allCategories } from '../store/TestTaskList'
+import { tasklist, allCategories } from '../store/TestTaskList'
+import { shortMonthNames } from '../store/Date'
 
-export let task = {}
+// управление дополнительными всплывающими окнами
+let isOpenDeadline = false;
+let isOpenCategories = false;
+let isOpenAddition = false;
+
+
+// распаковка задачи
+export let task = {};
 // {
 //     "id": 2,
 //     "title": "Исследование рынка",
@@ -15,15 +24,144 @@ export let task = {}
 //     "status": "done",
 //     "importance": 1,
 // }
-
+let title = task.title;
 let status = task.status;
 let importance = task.importance;
 let category = task.category;
-let [date, time] = task.deadline.split(" ");
 
-let isOpenDeadline = false;
-let isOpenCategories = false;
-let isOpenAddition = false;
+
+// распаковка значения дедлайна
+let dDT = new Date();
+let isED = false; // isExistsDate
+let isET = false;
+let dYear = 2024;
+let dMonth = 1;
+let dDay = 1;
+let dHour = 0;
+let dMin = 0;
+
+if (task.deadline != "") {
+    dDT = new Date(task.deadline);
+    const [date, time] = task.deadline.split(" ");
+
+    if (date != undefined) {
+        isED = true;
+        dYear = dDT.getFullYear();
+        dMonth = dDT.getMonth() + 1;
+        dDay = dDT.getDate();
+    }
+
+    if (time != undefined) {
+        isET = true;
+        dHour = dDT.getHours();
+        dMin = dDT.getMinutes();
+    }
+}
+
+let textDeadline = "no deadline";
+function viewDeadline () {
+    if (!isED) {
+        textDeadline = "no deadline";
+    } else {
+        textDeadline = `${dYear}, ${dDay} ${shortMonthNames[dMonth - 1]}`
+        if (isET) {
+            textDeadline += ` ${String(dHour).padStart(2, '0')}`
+            textDeadline += `:${String(dMin).padStart(2, '0')}`
+        }
+    }
+}
+if (isED)
+    viewDeadline()
+
+
+// управление выбором дедлайна
+function setDeadline () {
+    // обработка закрытия дополнительного окна
+    isOpenAddition = false;
+    setTimeout(() => {
+        isOpenDeadline = false;
+    }, 300)
+    
+    dDT = new Date(
+        dYear, dMonth-1, dDay, dHour, dMin, 0
+    )
+
+    dYear = dDT.getFullYear();
+    dMonth = dDT.getMonth() + 1;
+    dDay = dDT.getDate();
+
+    viewDeadline()
+}
+
+
+function saveTask () {
+
+    const newTitle = title;
+    const newImportance = importance;
+    const newСategory = category;
+    let finished = task.finished
+
+
+    // подготовка статуса
+    let newStatus = status;
+    if (newStatus != task.status) {
+
+        if (newStatus === "done" || newStatus === "fail" ) {
+            let dateFinished = new Date()
+            const month = String(dateFinished.getMonth()).padStart(2, '0');
+            const day = String(dateFinished.getDate()).padStart(2, '0');
+            finished = `${dateFinished.getFullYear()}-${month}-${day}`
+        } else {
+            finished = ""
+        }
+    }
+
+
+    // подготовка дедлайна
+    let newDeadLine = "";
+    if (isED) {
+        const month = String(dMonth).padStart(2, '0');
+        const day = String(dDay).padStart(2, '0');
+        newDeadLine = `${dYear}-${month}-${day}`
+
+        if (isET) {
+            const hour = String(dHour).padStart(2, '0');
+            const minute = String(dMin).padStart(2, '0');
+            newDeadLine += ` ${hour}:${minute}`
+        }
+    }
+
+
+
+    tasklist.update(items => {
+
+        const newTasklist = [...items];
+        const indexToUpdate = newTasklist.findIndex(
+            item => item.id === task.id
+        );
+
+        
+
+        if (indexToUpdate !== -1) {
+            newTasklist[indexToUpdate] = { 
+                ...newTasklist[indexToUpdate], 
+                    title: newTitle,
+                    importance: newImportance,
+                    category: newСategory,
+                    status: newStatus,
+                    finished: finished,
+                    deadline: newDeadLine,
+            };
+        }
+        return newTasklist;
+    });
+}
+
+
+onDestroy(_ => {
+    saveTask()
+})
+
 
 </script>
 
@@ -36,7 +174,7 @@ let isOpenAddition = false;
 
         <div class="mark">Title</div>
         <div class="title">
-            <input type="text" value={task.title}>
+            <input type="text" bind:value={title} >
         </div>
 
 
@@ -75,24 +213,18 @@ let isOpenAddition = false;
             </button>
         </div>
 
-        <!-- <div class="mark">Deadline</div>
-        <div class="categories">
-            <input type="date" value={date}>
-            <input type="time" value={time}>
-        </div> -->
 
         <div class="mark">Deadline</div>
         <div class="deadline">
-            <button><div>×</div></button>
-            <button><div>today</div></button>
-            <button><div>next<br>day</div></button>
+
             <button
                 on:click={e => {
                     isOpenDeadline = true;
                     isOpenAddition = true;
                 }}
-                ><div>2024-05-26 15:25</div>
+                >{textDeadline}
             </button>
+
         </div>
 
     </div>
@@ -105,54 +237,117 @@ let isOpenAddition = false;
 
         {#if isOpenDeadline }
             <div class="deadline-select">
+
+                <div class="set-deadline">
+                    {#if isED }
+                        <span>{`${dYear}, ${dDay} ${shortMonthNames[dMonth-1]}`}</span>
+                        {#if isET }
+                            <span>
+                            {`${String(dHour).padStart(2, '0')}:${String(dMin).padStart(2, '0')}`}
+                            </span>
+                        {/if}
+                    {:else}
+                        <span>no deadline</span>
+                    {/if}
+                    <button on:click={setDeadline} >Ok</button>
+                </div>
+
+
                 <div class="col-y col-mark">year</div>
                 <div class="col-m col-mark">month</div>
                 <div class="col-d col-mark">day</div>
                 <div class="col-ho col-mark">hour</div>
                 <div class="col-mi col-mark">minute</div>
 
+
                 <div class="col-y">
+                    <button 
+                        class={ !isED ? "active" : "" }
+                        on:click={e => {
+                            isED = false;
+                            isET = false;
+                            dYear = new Date().getFullYear();
+                            dMonth = 1;
+                            dDay = 1;
+                            dHour = 0;
+                            dMin = 0;
+                        }}
+                        >×
+                    </button>
                     {#each Array(15).fill().map((_, i) => i + 2024) as year }
-                        <button>{year}</button>
+                        <button 
+                            class={dYear === year && isED ? "active" : ""}
+                            on:click={e => {
+                                dYear = year;
+                                isED = true;
+                            }}
+                            >{year}
+                        </button>
                     {/each}
                 </div>
 
                 <div class="col-m">
                     {#each Array(12).fill().map((_, i) => i + 1) as month }
-                        <button>{month}</button>
+                        <button 
+                            class={dMonth === month && isED ? "active" : ""}
+                            on:click={e => {
+                                dMonth = month;
+                                isED = true;
+                            }}
+                            >{month}
+                        </button>
                     {/each}
                 </div>
 
                 <div class="col-d">
                     {#each Array(31).fill().map((_, i) => i + 1) as day }
-                        <button>{day}</button>
+                        <button 
+                            class={dDay === day && isED ? "active" : ""}
+                            on:click={e => {
+                                dDay = day;
+                                isED = true;
+                            }}
+                            >{day}
+                        </button>
                     {/each}
                 </div>
 
                 <div class="col-ho">
-                    <button>×</button>
+                    <button 
+                        class={ !isET ? "active" : "" }
+                        on:click={e => {
+                            isET = false;
+                            dHour = 0;
+                            dMin = 0;
+                        }}
+                        >×
+                    </button>
                     {#each Array(24).fill().map((_, i) => i) as hour }
-                        <button>{hour}</button>
+                        <button 
+                            class={dHour === hour && isET ? "active" : ""}
+                            on:click={e => {
+                                dHour = hour;
+                                isET = true;
+                            }}
+                            >{hour}
+                        </button>
                     {/each}
                 </div>
 
                 <div class="col-mi">
                     {#each Array(12).fill().map((_, i) => i * 5) as minute }
-                        <button>{minute}</button>
+                        <button 
+                            class={dMin === minute && isET ? "active" : ""}
+                            on:click={e => {
+                                dMin = minute;
+                                isET = true;
+                            }}
+                            >{minute}
+                        </button>
                     {/each}
                 </div>
 
-                <div class="set-deadline">
-                    <button
-                        on:click={e => {
-                            isOpenAddition = false;
-                            setTimeout(() => {
-                                isOpenDeadline = false;
-                            }, 300)
-                        }}
-                        >set deadline 2024-05-12 15:45
-                    </button>
-                </div>
+                
             </div>
         {/if}
 
@@ -308,11 +503,6 @@ let isOpenAddition = false;
     grid-auto-rows: 2.8em;
 }
 
-.deadline {
-    grid-template-columns: 3em 3em 3em 1fr;
-    grid-auto-rows: 3em;
-}
-
 .categories > button,
 .status-panel > button,
 .importance > button,
@@ -358,13 +548,6 @@ let isOpenAddition = false;
 .importance > button:hover::after,
 .deadline > button:hover::after {
     opacity: .3;
-}
-
-.deadline > button > div {
-    font-size: clamp(.2em, 1.5em, .74em);
-    flex-grow: 1;
-    display: flex;
-    flex-direction: column;
 }
 
 .wait.active,
@@ -454,8 +637,13 @@ let isOpenAddition = false;
 
 .set-deadline {
     grid-column: 1 / -1;
-    justify-self: center;
-    padding-top: .5em;
+
+    /* background-color: yellowgreen; */
+
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
 }
 
 .col-y, .col-m, .col-d, .col-ho, .col-mi {
@@ -473,6 +661,10 @@ let isOpenAddition = false;
     border: .14em solid var(--color-content-C);
     padding: .4em;
     position: relative;
+}
+
+.deadline-select button.active {
+    background-color: var(--color-accent);
 }
 
 .deadline-select > div > button::after {
