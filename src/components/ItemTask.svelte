@@ -1,7 +1,10 @@
 <script>
 import { shortMonthNames } from '../store/Date'
+import { tasklist } from '../store/TestTaskList'
 import {createEventDispatcher} from 'svelte';
 const dispatch = createEventDispatcher();
+import Tulle from './Tulle.svelte'
+import DialogTask from './DialogTask.svelte'
 
 export let task = {
     "id": 2,
@@ -11,10 +14,13 @@ export let task = {
     "finished": "2023-12-28",
     "deadline": "2024-03-12 15:15",
     "category": "Маркетинг",
-    "status": "done",
+    "status": "wait",
     "importance": 1,
 }
+export let isShowImportance = true;
+export let isDragAndDrop = false;
 
+let isOpenedDialog = false;
 let taskID = task.id;
 
 
@@ -31,32 +37,82 @@ function getDeadline () {
     }
     return taskDeadline
 }
+
+function changeStatus(){
+
+    tasklist.update(items => {
+
+        const newTasklist = [...items];
+        const indexToUpdate = newTasklist.findIndex(
+            item => item.id === taskID
+        );
+
+        if (indexToUpdate !== -1) {
+            let newStatus;
+            switch (newTasklist[indexToUpdate].status) {
+                case "wait":
+                    newStatus = "done"; break;
+                case "done":
+                    newStatus = "fail"; break;
+                default:
+                    newStatus = "wait"; break;
+            }
+            newTasklist[indexToUpdate] = { 
+                ...newTasklist[indexToUpdate], 
+                status: newStatus 
+            };
+        }
+        return newTasklist;
+    });
+}
 </script>
 
 
-<div class={`task ${task.status}`}>
+<!-- svelte-ignore a11y-no-static-element-interactions -->
+<div 
+    class={`task ${task.status}`} draggable={`${isDragAndDrop}`}
+    on:dragstart={e => dispatch('dragstart')}
+    >
 
-    <div class={`importance importance-${task.importance}`} />
+    {#if isShowImportance}
+        <div class={`importance importance-${task.importance}`} />
+    {/if}
 
     <button 
         class="check-status" 
-        on:click={e => dispatch('changeStatus', {taskID})}
+        on:click={changeStatus}
         >
         <svg><use xlink:href="#ico-check-mark"/></svg>
     </button>
 
     <button 
         class="object-task"
-        on:click={e => dispatch('openTask', {taskID})}
+        on:click={e => isOpenedDialog = true}
         >
         <span>{task.title}</span>
     </button>
 
-    <div class="deadline">
-        { task.deadline != "" ? getDeadline() : "" }
-    </div>
+    {#if isShowImportance}
+        <div class="deadline">
+            { task.deadline != "" ? getDeadline() : "" }
+        </div>
+    {:else}
+        <button 
+            class="remove-task" 
+            on:click={e => dispatch('remove')}
+            >
+            <svg><use xlink:href="#ico-delete"/></svg>
+        </button>
+    {/if}
 
 </div>
+
+
+{#if isOpenedDialog}
+    <Tulle on:closeDialog={e => isOpenedDialog = false} >
+        <DialogTask task={task} />
+    </Tulle>
+{/if}
 
 
 <style>
@@ -103,7 +159,7 @@ function getDeadline () {
 
     display: flex;
     align-items: center;
-    margin-right: .4em;
+    margin: 0 .4em;
 
     padding: 0 .2em;
     z-index: 2;
@@ -123,6 +179,11 @@ function getDeadline () {
     transition: transform 300ms ease-out;
 }
 
+.task > .check-status > svg {
+    width: .6em;
+    height: .6em;
+}
+
 .task > .check-importance {
     font-size: .6em;
     display: flex;
@@ -135,10 +196,11 @@ function getDeadline () {
     min-width: .2em;
     height: .92em;
     border-radius: .2em;
-    margin-right: .6em;
     transition: height 300ms ease-out;
     transform-origin: left;
+    margin-right: .6em;
     margin-left: .2em;
+    margin: 0 .2em;
 }
 
 .importance-1 {
@@ -276,4 +338,43 @@ function getDeadline () {
 .fail > .deadline {
     opacity: .4;
 }
+
+.task > button.remove-task {
+    font-size: .9em;
+    background-color: transparent;
+
+    display: flex;
+    align-items: center;
+    margin: 0 .6em;
+
+    z-index: 2;
+
+    width: 1em;
+    height: 1em;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    position: relative;
+
+    transition: opacity 300ms ease-out;
+    opacity: 0;
+    overflow: hidden;
+}
+
+.task > button.remove-task > svg {
+    width: .6em;
+    height: .6em;
+}
+
+.task:hover > button.remove-task {
+    opacity: .5;
+}
+
+.task:hover > button.remove-task:hover {
+    opacity: 1;
+}
+
+
 </style>

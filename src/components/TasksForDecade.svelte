@@ -2,10 +2,7 @@
 // @ts-nocheck
 
 import { tasklist } from '../store/TestTaskList'
-import TaskItem from './TaskLineItem.svelte'
-import Tulle from './Tulle.svelte'
-import DialogTask from './DialogTask.svelte'
-
+import ItemTask from './ItemTask.svelte'
 
 let completed = 0;
 let allCategories = [];
@@ -26,35 +23,6 @@ tasklist.subscribe(items => {
         conterDone * 100 / items.length
     )
 });
-
-
-function changeStatus(taskid){
-
-    tasklist.update(items => {
-
-        const newTasklist = [...items];
-        const indexToUpdate = newTasklist.findIndex(
-            item => item.id === taskid.detail.taskID
-        );
-
-        if (indexToUpdate !== -1) {
-            let newStatus;
-            switch (newTasklist[indexToUpdate].status) {
-                case "wait":
-                    newStatus = "done"; break;
-                case "done":
-                    newStatus = "fail"; break;
-                default:
-                    newStatus = "wait"; break;
-            }
-            newTasklist[indexToUpdate] = { 
-                ...newTasklist[indexToUpdate], 
-                status: newStatus 
-            };
-        }
-        return newTasklist;
-    });
-}
 
 
 const listSortBy = [
@@ -126,14 +94,6 @@ function sortTaskList(arg="creation"){
     });
 }
 
-let openedTask = {};
-
-function openTask(taskid){
-    const indexTask = $tasklist.findIndex(
-        item => item.id === taskid.detail.taskID
-    );
-    openedTask = $tasklist[indexTask]
-}
 </script>
 
 <div class="control-panel">
@@ -189,11 +149,7 @@ function openTask(taskid){
     {#if groupBy === "not group"}
 
         {#each isJW ? $tasklist.filter(t => t.status === "wait") : $tasklist as task }
-            <TaskItem 
-                task={task} 
-                on:changeStatus={changeStatus}
-                on:openTask={openTask}
-            />
+            <ItemTask task={task} />
         {/each}
 
 
@@ -205,11 +161,7 @@ function openTask(taskid){
 
             {#each isJW ? $tasklist.filter(t => t.status === "wait") : $tasklist as task }
                 {#if cat === task.category}
-                    <TaskItem 
-                        task={task} 
-                        on:changeStatus={changeStatus}
-                        on:openTask={openTask}
-                    />
+                    <ItemTask task={task} />
                 {/if}
             {/each}
         {/each}
@@ -227,11 +179,7 @@ function openTask(taskid){
             <div class="group">{group[0]}</div>
             {#each isJW ? $tasklist.filter(t => t.status === "wait") : $tasklist as task }
                 {#if task.status === group[1]}
-                    <TaskItem 
-                        task={task} 
-                        on:changeStatus={changeStatus}
-                        on:openTask={openTask}
-                    />
+                    <ItemTask task={task} />
                 {/if}
             {/each}
         {/each}
@@ -248,25 +196,12 @@ function openTask(taskid){
             <div class="group">{group[0]}</div>
             {#each $tasklist as task }
                 {#if task.importance === group[1]}
-                    <TaskItem 
-                        task={task} 
-                        on:changeStatus={changeStatus}
-                        on:openTask={openTask}
-                    />
+                    <ItemTask task={task} />
                 {/if}
             {/each} 
         {/each}
     {/if}
 </div>
-
-
-{#if Object.keys(openedTask).length > 0}
-    <Tulle on:closeDialog={() => {openedTask = {}}} >
-        <DialogTask 
-            task={openedTask}
-            on:changedecade={() => {}} />
-    </Tulle>
-{/if}
 
 <style>
 

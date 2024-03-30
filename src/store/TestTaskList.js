@@ -353,3 +353,22 @@ tasklist.subscribe(items => {
             allCategories.push(item.category)
     })
 });
+
+
+export let per100 = writable([
+    undefined
+])
+
+export let per200 = writable([
+    undefined,
+    undefined,
+    undefined
+])
+
+export let per300 = writable([
+    undefined,
+    undefined,
+    undefined,
+    undefined,
+    undefined
+])

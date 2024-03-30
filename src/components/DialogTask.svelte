@@ -227,6 +227,11 @@ onDestroy(_ => {
 
         </div>
 
+
+        <div class="mark">Auto recreate</div>
+
+        
+
     </div>
 
     <div 
