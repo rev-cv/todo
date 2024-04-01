@@ -372,3 +372,37 @@ export let per300 = writable([
     undefined,
     undefined
 ])
+
+
+export let vectors = [
+    {
+        icon: "🤾",
+        title: "Спорт",
+        description: "Lorem ipsum, dolor sit amet consectetur adipisicing elit. Similique laudantium tenetur vero, doloribus consequuntur numquam pariatur reiciendis et optio officiis explicabo totam facere. Quam suscipit nobis, ab corrupti fugit nihil.",
+        tasks: []
+    },
+    {
+        icon: "💰",
+        title: "Заработать много денег",
+        description: "Lorem ipsum, dolor sit amet consectetur adipisicing elit. Similique laudantium tenetur vero, doloribus consequuntur numquam pariatur reiciendis et optio officiis explicabo totam facere. Quam suscipit nobis, ab corrupti fugit nihil.",
+        tasks: []
+    },
+    {
+        icon: "📚",
+        title: "Образование",
+        description: "Lorem ipsum, dolor sit amet consectetur adipisicing elit. Similique laudantium tenetur vero, doloribus consequuntur numquam pariatur reiciendis et optio officiis explicabo totam facere. Quam suscipit nobis, ab corrupti fugit nihil.",
+        tasks: []
+    },
+    {
+        icon: "🏡",
+        title: "Дом",
+        description: "Lorem ipsum, dolor sit amet consectetur adipisicing elit. Similique laudantium tenetur vero, doloribus consequuntur numquam pariatur reiciendis et optio officiis explicabo totam facere. Quam suscipit nobis, ab corrupti fugit nihil.",
+        tasks: []
+    },
+    {
+        icon: "🥁",
+        title: "Музыка",
+        description: "Lorem ipsum, dolor sit amet consectetur adipisicing elit. Similique laudantium tenetur vero, doloribus consequuntur numquam pariatur reiciendis et optio officiis explicabo totam facere. Quam suscipit nobis, ab corrupti fugit nihil.",
+        tasks: []
+    },
+]

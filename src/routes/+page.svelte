@@ -9,8 +9,9 @@ import NewProject from '../components/NewProject.svelte';
 import ChangeDate from '../components/ChangeDate.svelte';
 import ChangeDecade from '../components/ChangeDecade.svelte';
 
-import TasksForDecade from '../components/TasksForDecade.svelte';
 import TasksForDay from '../components/TasksForDay.svelte';
+import TasksForDecade from '../components/TasksForDecade.svelte';
+import TasksForYear from '../components/TasksForYear.svelte';
 
 import { page } from '../store/OpenPage'
 
@@ -75,7 +76,7 @@ let openedSubTaskFor = TaskForSub[0];
             <!-- {:else if openedSubTaskFor === 'month'}
                 <div class="content">Tasks for month</div> -->
             {:else if openedSubTaskFor === 'year'}
-                <div class="content">Tasks for year</div>
+                <div class="content"><TasksForYear /></div>
             {/if}
 
         {:else if $page === '/ideas'}
