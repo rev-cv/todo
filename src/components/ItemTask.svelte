@@ -16,6 +16,7 @@ export let task = {
     "category": "Маркетинг",
     "status": "wait",
     "importance": 1,
+    "type": "standard", 
 }
 export let isShowImportance = true;
 export let isDragAndDrop = false;

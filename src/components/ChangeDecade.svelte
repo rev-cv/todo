@@ -39,7 +39,6 @@ function changedecade(arg="."){
             break;
     }
     setIsCurrentDec()
-
     
 }
 </script>

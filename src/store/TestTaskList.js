@@ -12,6 +12,9 @@ export const tasklist = writable([
         "category": "Разработка ПО",
         "status": "done",
         "importance": 1,
+        "type": "standard", 
+            // standard - обычная задача
+            // vector - задача только для векторов
     },
     {
         "id": 2,
@@ -23,6 +26,7 @@ export const tasklist = writable([
         "category": "Маркетинг",
         "status": "done",
         "importance": 1,
+        "type": "standard",
     },
     {
         "id": 3,
@@ -34,6 +38,7 @@ export const tasklist = writable([
         "category": "ИТ",
         "status": "wait",
         "importance": 2,
+        "type": "standard",
     },
     {
         "id": 4,
@@ -45,6 +50,7 @@ export const tasklist = writable([
         "category": "Аналитика",
         "status": "wait",
         "importance": 2,
+        "type": "standard",
     },
     {
         "id": 5,
@@ -56,6 +62,7 @@ export const tasklist = writable([
         "category": "Обучение",
         "status": "wait",
         "importance": 2,
+        "type": "standard",
     },
     {
         "id": 6,
@@ -67,6 +74,7 @@ export const tasklist = writable([
         "category": "Разработка ПО",
         "status": "fail",
         "importance": 2,
+        "type": "standard",
     },
     {
         "id": 7,
@@ -78,6 +86,7 @@ export const tasklist = writable([
         "category": "Маркетинг",
         "status": "wait",
         "importance": 3,
+        "type": "standard",
     },
     {
         "id": 8,
@@ -89,6 +98,7 @@ export const tasklist = writable([
         "category": "ИТ",
         "status": "wait",
         "importance": 3,
+        "type": "standard",
     },
     {
         "id": 9,
@@ -100,6 +110,7 @@ export const tasklist = writable([
         "category": "Аналитика",
         "status": "wait",
         "importance": 3,
+        "type": "standard",
     },
     {
         "id": 10,
@@ -111,6 +122,7 @@ export const tasklist = writable([
         "category": "Обучение",
         "status": "wait",
         "importance": 0,
+        "type": "standard",
     },
     {
         "id": 11,
@@ -122,6 +134,7 @@ export const tasklist = writable([
         "category": "Разработка ПО",
         "status": "wait",
         "importance": 0,
+        "type": "standard",
     },
     {
         "id": 12,
@@ -133,6 +146,7 @@ export const tasklist = writable([
         "category": "Маркетинг",
         "status": "done",
         "importance": 0,
+        "type": "standard",
     },
     {
         "id": 13,
@@ -144,6 +158,7 @@ export const tasklist = writable([
         "category": "ИТ",
         "status": "wait",
         "importance": 2,
+        "type": "standard",
     },
     {
         "id": 14,
@@ -155,6 +170,7 @@ export const tasklist = writable([
         "category": "Аналитика",
         "status": "wait",
         "importance": 1,
+        "type": "standard",
     },
     {
         "id": 15,
@@ -166,6 +182,7 @@ export const tasklist = writable([
         "category": "Обучение",
         "status": "wait",
         "importance": 3,
+        "type": "standard",
     },
     {
         "id": 16,
@@ -177,6 +194,7 @@ export const tasklist = writable([
         "category": "Разработка ПО",
         "status": "wait",
         "importance": 2,
+        "type": "standard",
     },
     {
         "id": 17,
@@ -188,6 +206,7 @@ export const tasklist = writable([
         "category": "Маркетинг",
         "status": "wait",
         "importance": 2,
+        "type": "standard",
     },
     {
         "id": 18,
@@ -199,6 +218,7 @@ export const tasklist = writable([
         "category": "ИТ",
         "status": "wait",
         "importance": 1,
+        "type": "standard",
     },
     {
         "id": 19,
@@ -210,6 +230,7 @@ export const tasklist = writable([
         "category": "Аналитика",
         "status": "done",
         "importance": 1,
+        "type": "standard",
     },
     {
         "id": 20,
@@ -221,6 +242,7 @@ export const tasklist = writable([
         "category": "Обучение",
         "status": "wait",
         "importance": 1,
+        "type": "standard",
     },
     {
         "id": 21,
@@ -232,6 +254,7 @@ export const tasklist = writable([
         "category": "Разработка ПО",
         "status": "wait",
         "importance": 1,
+        "type": "standard",
     },
     {
         "id": 22,
@@ -243,6 +266,7 @@ export const tasklist = writable([
         "category": "Маркетинг",
         "status": "wait",
         "importance": 1,
+        "type": "standard",
     },
     {
         "id": 23,
@@ -254,6 +278,7 @@ export const tasklist = writable([
         "category": "ИТ",
         "status": "wait",
         "importance": 2,
+        "type": "standard",
     },
     {
         "id": 24,
@@ -265,6 +290,7 @@ export const tasklist = writable([
         "category": "Аналитика",
         "status": "fail",
         "importance": 3,
+        "type": "standard",
     },
     {
         "id": 25,
@@ -276,6 +302,7 @@ export const tasklist = writable([
         "category": "Обучение",
         "status": "wait",
         "importance": 0,
+        "type": "standard",
     },
     {
         "id": 26,
@@ -287,6 +314,7 @@ export const tasklist = writable([
         "category": "Обучение",
         "status": "wait",
         "importance": 0,
+        "type": "standard",
     },
     {
         "id": 27,
@@ -298,6 +326,7 @@ export const tasklist = writable([
         "category": "Разработка ПО",
         "status": "wait",
         "importance": 0,
+        "type": "standard",
     },
     {
         "id": 28,
@@ -309,6 +338,7 @@ export const tasklist = writable([
         "category": "Маркетинг",
         "status": "wait",
         "importance": 0,
+        "type": "standard",
     },
     {
         "id": 29,
@@ -320,6 +350,7 @@ export const tasklist = writable([
         "category": "ИТ",
         "status": "wait",
         "importance": 2,
+        "type": "standard",
     },
     {
         "id": 30,
@@ -331,6 +362,7 @@ export const tasklist = writable([
         "category": "Аналитика",
         "status": "fail",
         "importance": 1,
+        "type": "standard",
     },
     {
         "id": 31,
@@ -342,6 +374,7 @@ export const tasklist = writable([
         "category": "Обучение",
         "status": "wait",
         "importance": 3,
+        "type": "standard",
     }
 ]);
 
@@ -374,12 +407,37 @@ export let per300 = writable([
 ])
 
 
-export let vectors = [
+export let vectors = writable([
     {
         icon: "🤾",
         title: "Спорт",
         description: "Lorem ipsum, dolor sit amet consectetur adipisicing elit. Similique laudantium tenetur vero, doloribus consequuntur numquam pariatur reiciendis et optio officiis explicabo totam facere. Quam suscipit nobis, ab corrupti fugit nihil.",
-        tasks: []
+        tasks: [
+            {
+                "id": 230,
+                "title": "Изучение потребительских предпочтений",
+                "start": "2023-08-01",
+                "finish": "2023-10-15",
+                "finished": "2023-12-28",
+                "deadline": "2024-03-12 15:50",
+                "category": "Аналитика",
+                "status": "fail",
+                "importance": 1,
+                "type": "vector",
+            },
+            {
+                "id": 231,
+                "title": "Тренинг по лидерству",
+                "start": "2023-11-01",
+                "finish": "2023-11-30",
+                "finished": "",
+                "deadline": "2024-03-12 15:50",
+                "category": "Обучение",
+                "status": "wait",
+                "importance": 3,
+                "type": "vector",
+            }
+        ]
     },
     {
         icon: "💰",
@@ -402,7 +460,7 @@ export let vectors = [
     {
         icon: "🥁",
         title: "Музыка",
-        description: "Lorem ipsum, dolor sit amet consectetur adipisicing elit. Similique laudantium tenetur vero, doloribus consequuntur numquam pariatur reiciendis et optio officiis explicabo totam facere. Quam suscipit nobis, ab corrupti fugit nihil.",
+        description: "Му́зыка (от др.-греч. μουσική[К 1]) — вид искусства, в котором определённым образом организованные звуки используются для создания некоторого сочетания формы, гармонии, мелодии, ритма или иного выразительного содержания. Определения музыки различаются в зависимости от той или иной культуры, однако она является аспектом всех человеческих обществ — культурной универсалией[1][К 2]. Исследователи признают, что музыка определяется несколькими конкретными элементами (высотой, тембром, продолжительностью, формой и др.), однако единого мнения относительно их определений не существует[4]. Создание музыки обычно подразделяется на музыкальные композицию, импровизацию и исполнение[5], в то время как различные аспекты музыкального искусства рассматриваются в рамках академических дисциплин (например, музыковедения и теории музыки), критики, философии и психологии. Исполнение и импровизация музыки могут осуществляться с использованием широкого спектра инструментов, включая голос.",
         tasks: []
     },
-]
+])

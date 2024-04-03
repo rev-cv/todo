@@ -8,6 +8,7 @@ import NewTask from '../components/NewTask.svelte';
 import NewProject from '../components/NewProject.svelte';
 import ChangeDate from '../components/ChangeDate.svelte';
 import ChangeDecade from '../components/ChangeDecade.svelte';
+import ChangeYear from '../components/ChangeYear.svelte';
 
 import TasksForDay from '../components/TasksForDay.svelte';
 import TasksForDecade from '../components/TasksForDecade.svelte';
@@ -40,7 +41,7 @@ let openedSubTaskFor = TaskForSub[0];
 
             <div class="header-page">
                 <h1>Main Page</h1>
-                <div class="stretch"></div>
+                <div class="stretch" />
             </div>
             <div class="content">Main Page</div>
 
@@ -57,14 +58,14 @@ let openedSubTaskFor = TaskForSub[0];
                     </button>
                 {/each}
                 
-                <div class="stretch"></div>
+                <div class="stretch" />
 
                 {#if openedSubTaskFor === 'day'}
                     <ChangeDate />
                 {:else if openedSubTaskFor === 'decade'}
                     <ChangeDecade />
                 {:else if openedSubTaskFor === 'year'}
-                    year
+                    <ChangeYear />
                 {/if}
                 
             </div>
@@ -83,7 +84,7 @@ let openedSubTaskFor = TaskForSub[0];
         
             <div class="header-page">
                 <h1>Task-Ideas</h1>
-                <div class="stretch"></div>
+                <div class="stretch" />
             </div>
             <div class="content">Task-Ideas</div>
             
@@ -91,7 +92,7 @@ let openedSubTaskFor = TaskForSub[0];
 
             <div class="header-page">
                 <h1>Projects</h1>
-                <div class="stretch"></div>
+                <div class="stretch" />
                 <button class="new-project" on:click={() => {isOpenNewProject = true}}>
                     <svg><use xlink:href="#ico-add"/></svg>
                     <span>New project</span>
@@ -106,7 +107,7 @@ let openedSubTaskFor = TaskForSub[0];
 
             <div class="header-page">
                 <h1>Setting</h1>
-                <div class="stretch"></div>
+                <div class="stretch" />
             </div>
             <div class="content">Setting</div>
 
@@ -114,7 +115,7 @@ let openedSubTaskFor = TaskForSub[0];
 
             <div class="header-page">
                 <h1>Categories</h1>
-                <div class="stretch"></div>
+                <div class="stretch" />
             </div>
             <div class="content">Categories</div>
 
@@ -122,7 +123,7 @@ let openedSubTaskFor = TaskForSub[0];
 
             <div class="header-page">
                 <h1>Priority Queue</h1>
-                <div class="stretch"></div>
+                <div class="stretch" />
             </div>
             <div class="content">Setting</div>
             
