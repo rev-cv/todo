@@ -207,7 +207,7 @@ function manageTaskForDay(list, position) {
     padding: 1em;
     border-radius: .2em .6em .6em .2em;
     border-left: .2em solid yellowgreen;
-    /* border-right: .05em solid yellowgreen; */
+    box-shadow: var(--color-block-shadow-on-block);
 }
 
 .block-100per > .title {
