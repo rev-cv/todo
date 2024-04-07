@@ -70,6 +70,11 @@
 	    <path d="M-0.91 2.12L8.18 11.21L-0.91 20.3L2.12 23.33L11.21 14.24L20.3 23.33L23.33 20.3L14.24 11.21L23.33 2.12L20.3 -0.91L11.21 8.18L2.12 -0.91L-0.91 2.12Z" fill="#000" fill-rule="nonzero"/>
 	</symbol>
 
+    <symbol id="ico-delete-in-basket" viewBox="0 0 30 30">
+        <path d="M28.74 2.5L21.24 2.5L21.24 0L8.75 0L8.75 2.5L1.25 2.5C0.41 2.5 0 2.91 0 3.75L0 6.25C0 7.08 0.41 7.5 1.25 7.5L28.74 7.5C29.58 7.5 29.99 7.08 29.99 6.25L29.99 3.75C29.99 2.91 29.58 2.5 28.74 2.5Z" fill="#000" fill-opacity="1" fill-rule="nonzero"/>
+        <path d="M22.85 30L7.27 30C6.64 30 6.08 29.79 5.6 29.38C5.13 28.96 4.85 28.44 4.77 27.81L2.5 10L27.49 10L25.33 27.81C25.25 28.43 24.98 28.96 24.5 29.37C24.03 29.79 23.48 30 22.85 30Z" fill="#000" fill-opacity="1" fill-rule="nonzero"/>
+    </symbol>
+
     <symbol id="ico-google" viewBox="0 0 50 50">
 		<g> группа в которой находится иконка google </g>
 	</symbol>
@@ -89,8 +94,9 @@
     #svg-sprite > symbol *[fill] {
         fill: var(--color-content-B);
     }
-
+    
     #svg-sprite > symbol#ico-delete *[fill],
+    #svg-sprite > symbol#ico-delete-in-basket *[fill],
     #svg-sprite > symbol#ico-check-fail *[fill] {
         fill: var(--color-importance-A);
     }
@@ -100,5 +106,3 @@
     }
 
 </style>
-
-

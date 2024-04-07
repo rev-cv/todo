@@ -1,21 +1,18 @@
 <script>
 // @ts-nocheck
 import { vectors } from '../store/TestTaskList'
-import { year } from '../store/Date'
 import ItemTask from './ItemTask.svelte'
 import EmojiPicker from './EmojiPicker.svelte'
+import Tulle from './Tulle.svelte'
+import Confirmation from './DialogConfirmation.svelte'
+
 
 let active = 0;
+let isViewMotivation = false;
+let isDeletionWarning = false;
+let shuffleVector = undefined;
+let textarea;
 
-const svgWidth = 20;
-const svgHeight = 20;
-const cx = svgWidth / 2;
-const cy = svgHeight / 2;
-const VRadius = 7;
-const vsRadius = 2;
-
-let isViewDescription = false;
-let isOpenVector = false;
 
 function changeEmoji(emoji) {
     vectors.update(items => {
@@ -24,192 +21,231 @@ function changeEmoji(emoji) {
         return newTasklist;
     });
 }
+
+
+function handleInput(e) {
+    textarea.style.height = 'auto';
+    textarea.style.height = `${textarea.scrollHeight}px`;
+}
+setTimeout(handleInput, 1);
+
+
+function newVector () {
+    vectors.update(items => {
+        if (items.length < 5)
+            items.push({
+                icon: "🎖️",
+                title: items.length === 0 ? "my first vector" : "new vector",
+                motivation: "",
+                tasks: [],
+            })
+        return items;
+    });
+    active = $vectors.length - 1;
+}
+if ($vectors.length === 0) newVector ();
+
+
+function delVector () {
+    vectors.update(items => {
+        items = items.filter((item, index) => index != active);
+        if (items.length === 0)
+            items.push({
+                icon: "🎖️",
+                title: items.length === 0 ? "my first vector" : "new vector",
+                motivation: "",
+                tasks: [],
+            })
+        return items;
+    });
+    active = 0 < active ? active - 1 : 0;
+}
+
+function shuffleVectors () {
+
+}
+
 </script>
 
-<div class="vectors">
-    <svg
-        width={`${svgWidth}em`}
-        height={`${svgHeight}em`}
-        >
 
-        <circle
-            class="development-vectors"
-            cx={`${cx}em`}
-            cy={`${cy}em`}
-            r={`${VRadius}em`}
-        />
-
-
-        <g class="main-title">
-            <text
-                x={`${(cx - 3.5) / 1.2}em`}
-                y={`${(cy - .2) / 1.2}em`}
-                >Development
-            </text>
-
-            <text
-                x={`${(cx - 3.5) / 1.2}em`}
-                y={`${(cy + 1.5) / 1.2}em`}
-                >vectors {$year}
-            </text>
-        </g>
-
-
+<div class="vector-about">
+    <div class="vectors-list">
         {#each $vectors as vec, i }
-            <!-- svelte-ignore a11y-no-static-element-interactions -->
-            <!-- svelte-ignore a11y-click-events-have-key-events -->
-            <g 
-                class={active === i ? "vector active" : "vector"} 
-                on:click={e => active = i } 
-                >
-                <circle 
-                    cx={`${cx + VRadius * Math.cos(2 * Math.PI * i / $vectors.length)}em`}
-                    cy={`${cy + VRadius * Math.sin(2 * Math.PI * i / $vectors.length)}em`}
-                    r={`${vsRadius}em`}
-                />
-                <text
-                    class="icon"
-                    x={`${(cx + VRadius * Math.cos(2 * Math.PI * i / $vectors.length) - 1.2) / 2}em`}
-                    y={`${(cy + VRadius * Math.sin(2 * Math.PI * i / $vectors.length) + .6) / 2}em`}
-                    >{vec.icon}
-                </text>
-            </g>
-        {/each}
-
-    </svg>
-
-    <button class="new-vector">
-        <svg><use xlink:href="#ico-add"/></svg>
-    </button>
-
-    <div class="vector-about">
-        <!-- <div class="mark">title</div> -->
-        <div class="title-block">
-            <EmojiPicker 
-                currentEmoji={$vectors[active].icon}
-                on:select={changeEmoji}
-            />
-            <div class="title">{$vectors[active].title}</div>
-        </div>
-
-        <div class="block">
-            <div class="mark">Tasks for vector</div>
-            {#each $vectors[active].tasks as task}
-                <ItemTask 
-                    task={task}
-                    isShowImportance={false}
-                />
-            {/each}
             <button
-                class="add-new-task-for-vector"
-                >
-                    <svg><use xlink:href="#ico-add"/></svg>
-                    <span>new task</span>
+                class={active === i ? "vector active" : "vector"} 
+                on:click={e => {
+                    active = i;
+                    setTimeout(handleInput, 1);
+                } } 
+                on:dragstart={e => shuffleVector = i}
+                >{vec.icon}
+            </button>
+            <!-- svelte-ignore a11y-no-static-element-interactions -->
+            <div 
+                class="positition-for-vector" 
+                on:dragover|preventDefault
+                on:drop|preventDefault={e => {} }
+            />
+        {/each}
+    
+        {#if $vectors.length < 5}
+            <button class="new-vector" on:click={newVector}>
+                <svg><use xlink:href="#ico-add"/></svg>
+            </button>
+        {/if}
+    </div>
+
+    <!-- <div class="mark">title</div> -->
+    <div class="title-block">
+        <EmojiPicker 
+            currentEmoji={$vectors[active].icon}
+            on:select={changeEmoji}
+        />
+        <input 
+            class="title" 
+            value={$vectors[active].title}
+            on:change={e => $vectors[active].title = e.target.value}
+        />
+        <button 
+            class="delete-vector"
+            on:click={e => {isDeletionWarning = !isDeletionWarning}}
+            ><svg><use xlink:href="#ico-delete-in-basket"/></svg>
+        </button>
+    </div>
+
+    <div class="block">
+        <div class="mark">Tasks for vector</div>
+        {#each $vectors[active].tasks as task}
+            <ItemTask 
+                task={task}
+                isShowImportance={false}
+            />
+        {/each}
+        <button
+            class="add-new-task-for-vector"
+            >
+                <svg><use xlink:href="#ico-add"/></svg>
+                <span>new task</span>
+        </button>
+    </div>
+    
+
+    <div class="block">
+        <div class="descr-block">
+            <button 
+                class={isViewMotivation ? "" : "active"}
+                on:click={e => {
+                    isViewMotivation = !isViewMotivation;
+                    setTimeout(handleInput, 100);
+                }}
+                ><span>Motivation</span>
+                <svg><use xlink:href="#ico-arrow"/></svg>
             </button>
         </div>
         
-
-        <div class="block">
-            <div class="descr-block">
-                <div class="mark">description</div>
-                <button 
-                    class={isViewDescription ? "active" : ""}
-                    on:click={e => isViewDescription = !isViewDescription}
-                    ><svg><use xlink:href="#ico-arrow"/></svg>
-                </button>
-            </div>
-            
-            <div 
-                class={isViewDescription ? "description view" : "description"}
-                >{$vectors[active].description}
-            </div>
-        </div>
-        
-        
+        <textarea 
+            class={isViewMotivation ? "motivation view" : "motivation"}
+            on:input={handleInput}
+            bind:value={$vectors[active].motivation}
+            bind:this={textarea}
+        />
     </div>
-
 </div>
+
+
+{#if isDeletionWarning}
+    <Tulle on:closeDialog={() => {isDeletionWarning = false}} >
+        <Confirmation
+            on:confirm={e => {
+                isDeletionWarning = false;
+                delVector();
+            }}
+            on:noConfirm={e => isDeletionWarning = false}
+            >
+            <div class="del-message">
+                <div class="del-message-title">Delete?</div>
+                <div class="del-message-vector">
+                    {$vectors[active].icon} {$vectors[active].title}
+                </div>
+            </div>
+        </Confirmation>
+    </Tulle>
+{/if}
 
 
 <style>
 
-.vectors {
+.vectors-list {
     display: flex;
-}
-
-
-
-/* CIRCLE VECTORS */
-
-svg {
-    font-size: 1em;
-    user-select: none;
-}
-
-.development-vectors {
-    fill: transparent;
-    stroke-width: 1em;
-    stroke: var(--color-content-C);
-    stroke-dasharray: 4;
+    align-items: center;
+    padding-top: 1em;
 }
 
 .vector {
-    fill: var(--color-canvas);
-    cursor: pointer;
+    font-size: 1.6em;
+    --size: 2em;
+    width: var(--size);
+    height: var(--size);
+    border-radius: .4em;
+    transform: scale(1);
+    background-color: transparent;
+    border: .08em solid var(--color-content-C);
+    transition: all 200ms ease-out;
 
-    stroke-width: .2em;
-    stroke: var(--color-content-C);
-
-    box-shadow: var(--color-block-shadow);
-    transform-origin: center;
-    transition: all 300ms ease-out;
-}
-
-.active {
-    fill: var(--color-accent);
-    transform: scale(1.1);
-}
-
-.vector > text.icon {
-    font-size: 2em;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 .vector:hover {
-    transform: scale(1.06);
+    transform: scale(1.1);
 }
 
-.main-title > text {
-    font-size: 1.2em;
-    font-weight: 700;
-    fill: var(--color-content);
+.vector.active {
+    background-color: var(--color-accent);
+    border-width: 0;
+    box-shadow: var(--color-block-shadow);
+}
+
+.positition-for-vector {
+    width: .4em;
+    height: 100%;
+    background-color: var(--color-content-C);
+    border-radius: .1em;
 }
 
 button.new-vector {
-    position: absolute;
     font-size: 1em;
     top: 24em;
-    width: 3em;
-    height: 3em;
+    width: 2em;
+    height: 2em;
 
     display: flex;
     align-items: center;
-    padding: .6em;
+    padding: .4em;
+    margin-left: .4em;
     border-radius: 50%;
 
     background-color: transparent;
-    border: .2em solid var(--color-content-C);
+    transform: scale(.7);
+    overflow: hidden;
+
+    transition: all 200ms ease-out;
 }
 
+button.new-vector:hover {
+    transform: scale(.8);
+}
 
-/* ABOUT VECTORS */
+button.new-vector:active {
+    transform: scale(.7);
+}
 
 .vector-about {
-    width: 22em;
-    margin: 2em 3em 0 3em;
-    max-height: 30em;
-    overflow-x: hidden;
-    overflow-y: auto;
-    padding-right: 1em;
+    min-width: 26em;
+
+    display: flex;
+    flex-direction: column;
 }
 
 .block {
@@ -217,39 +253,48 @@ button.new-vector {
     box-shadow: var(--color-block-shadow-on-block);
     padding: .5em;
     border-radius: .4em;
-    margin: .5em 0;
+    margin: .25em 0;
 
     display: flex;
     flex-direction: column;
 }
 
-.mark {
+.mark, 
+.descr-block > button > span {
     font-size: .6em;
     font-weight: 700;
     opacity: .5;
     margin: .5em;
     user-select: none;
+    color: var(--color-content-B);
 }
-
-
-/* TITLE FOR VECTOR */
 
 .title-block {
     display: flex;
     align-items: center;
+    margin-top: 1em;
 }
 
 .title {
+    flex-grow: 1;
+
     font-size: 1.4em;
     font-weight: 700;
     margin-left: .3em;
+
+    background-color: transparent;
+    color: var(--color-content-A);
+    padding: .4em;
+
+    border-radius: .4em;
 }
 
-
-/* TASKS FOR VECTOR */
+.title:focus {
+    box-shadow: var(--color-block-shadow-inset);
+}
 
 button.add-new-task-for-vector {
-    align-self: flex-end;
+    align-self: flex-start;
 
     font-size: .8em;
     margin: .6em .4em .6em .14em;
@@ -266,41 +311,35 @@ button.add-new-task-for-vector {
     overflow: hidden;
 }
 
-button.add-new-task-for-vector::before {
-    position: absolute;
-    content: "";
-    top: 0;
-    right: 0;
-    bottom: 0;
-    left: 0;
-    background-color: var(--color-content-C);
-    transition: opacity 300ms ease-out;
-    opacity: 0;
-}
-
-button.add-new-task-for-vector:hover::before {
-    opacity: .4;
-}
-
 button.add-new-task-for-vector > svg {
     width: 1em;
     height: 1em;
     margin: 0 .4em 0 0;
 }
 
-
-/* DESCRIPTION FOR VECTOR */
-
-.description {
+.motivation {
     font-size: .8em;
-    opacity: .8;
-    padding: .5em;
+    background-color: transparent;
+    color: var(--color-content-B);
+    padding: 0 1em;
+    border-radius: .4em;
+    resize: none;
+
+    overflow: hidden;
+    max-height: 0;
+    opacity: .2;
+    transition: all 300ms ease-out;
 }
 
-.description.view {
-    max-height: 0;
-    overflow: hidden;
-    padding: 0 .5em;
+.motivation.view {
+    max-height: 500px;
+    opacity: .8;
+    padding: 1em;
+}
+
+.motivation:focus {
+    box-shadow: var(--color-block-shadow-inset);
+    opacity: 1;
 }
 
 .descr-block {
@@ -310,31 +349,100 @@ button.add-new-task-for-vector > svg {
 }
 
 .descr-block > button {
+    flex-grow: 1;
     font-size: 1rem;
 
     background-color: transparent;
 
     display: flex;
-    justify-content: center;
+    justify-content: space-between;
     align-items: center;
-
-    width: .6em;
-    height: .6em;
-    margin-right: .5em;
-
-    transition: transform 100ms ease-out;
-    transform: rotate(180deg);
+    
 }
 
-.descr-block > button.active {
+.descr-block > button > svg {
+    transition: transform 300ms ease-out;
+    transform: rotate(180deg);
+    height: .4em;
+    width: 1.4em;
+}
+
+.descr-block > button.active > svg {
     transform: rotate(0deg);
 }
 
 
+.delete-vector {
+    align-self: center;
+    font-size: .4em;
+
+    width: 4em;
+    height: 4em;
+    padding: 1em;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 50%;
+
+    background-color: transparent;
+
+    position: relative;
+    overflow: hidden;
+
+    transition: all 300ms ease-out;
+    transform: scale(.4);
+    background-color: var(--color-importance-A);
+}
+
+.delete-vector:hover {
+    transform: scale(1);
+    background-color: transparent;
+}
 
 
+.add-new-task-for-vector::before,
+.delete-vector::before,
+.new-vector::before {
+    content: "";
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    position: absolute;
+    background-color: var(--color-content-C);
+    opacity: 0;
+    transition: opacity 200ms ease-out;
+}
 
+.add-new-task-for-vector:hover::before,
+.delete-vector:hover::before,
+.new-vector:hover::before {
+    opacity: .5;
+}
 
+/* MESSAGE FOR DELETE */
 
+.del-message {
+    display: flex;
+    flex-direction: column;
+}
 
+.del-message-title {
+    font-size: 1.4em;
+    font-weight: 700;
+    text-align: center;
+}
+
+.del-message-vector {
+    font-size: 1.1em;
+
+    height: 4em;
+    
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+}
 </style>
