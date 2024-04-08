@@ -5,21 +5,26 @@ import {createEventDispatcher} from 'svelte';
 const dispatch = createEventDispatcher();
 import Tulle from './Tulle.svelte'
 import DialogTask from './DialogTask.svelte'
+import DialogTaskVector from './DialogTaskVector.svelte'
+
 
 export let task = {
-    "id": 2,
+    "id": -1, // если (-1) значит отображается создаваемая сейчас задача
     "title": "Исследование рынка",
-    "start": "2023-07-01",
-    "finish": "2023-12-31",
-    "finished": "2023-12-28",
-    "deadline": "2024-03-12 15:15",
-    "category": "Маркетинг",
+    "start": "", // 2023-07-01
+    "finish": "", // 2023-12-31
+    "finished": "", // 2023-12-28
+    "deadline": "", // 2024-03-12 15:15
+    "category": "",
     "status": "wait",
-    "importance": 1,
+    "importance": 0,
     "type": "standard", 
 }
+
+
 export let isShowImportance = true;
 export let isDragAndDrop = false;
+
 
 let isOpenedDialog = false;
 let taskID = task.id;
@@ -110,11 +115,16 @@ function changeStatus(){
 
 
 {#if isOpenedDialog}
-    <Tulle on:closeDialog={e => isOpenedDialog = false} >
-        <DialogTask task={task} />
-    </Tulle>
+    {#if task.type === "standard"}
+        <Tulle on:closeDialog={e => isOpenedDialog = false} >
+            <DialogTask task={task} />
+        </Tulle>
+    {:else if task.type === "vector"}
+        <Tulle on:closeDialog={e => isOpenedDialog = false} >
+            <DialogTaskVector task={task} />
+        </Tulle>
+    {/if}
 {/if}
-
 
 <style>
 

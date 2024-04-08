@@ -10,8 +10,11 @@ import Confirmation from './DialogConfirmation.svelte'
 let active = 0;
 let isViewMotivation = false;
 let isDeletionWarning = false;
-let shuffleVector = undefined;
-let textarea;
+
+let textarea; // <textarea>
+
+let indexShuffleVector = undefined;
+let shuffleSpaceOver = undefined;
 
 
 function changeEmoji(emoji) {
@@ -61,32 +64,62 @@ function delVector () {
     active = 0 < active ? active - 1 : 0;
 }
 
-function shuffleVectors () {
 
+function shuffleVectors (onPos) {
+    // вектор с индексом indexShuffleVector на позицию onPos
+    if (indexShuffleVector != undefined){
+        vectors.update(items => {
+            let arr = [...items];
+            const elem = arr.splice(indexShuffleVector, 1, undefined);
+            if (elem.length != 0) {
+                arr.splice(onPos, 0, elem[0])
+            }
+            return arr.filter(elem => elem != undefined);
+        });
+        indexShuffleVector = undefined;
+    }
 }
-
 </script>
 
 
 <div class="vector-about">
     <div class="vectors-list">
+
+        <!-- svelte-ignore a11y-no-static-element-interactions -->
+        <div 
+            class={ shuffleSpaceOver === 0 ? "positition-for-vector over" : "positition-for-vector"}
+            on:dragover|preventDefault
+            on:drop|preventDefault={e => {
+                shuffleVectors(0);
+                shuffleSpaceOver = undefined;
+            }}
+            on:dragenter={e => shuffleSpaceOver = 0}
+            on:dragleave={e => shuffleSpaceOver = undefined}
+        />
         {#each $vectors as vec, i }
             <button
                 class={active === i ? "vector active" : "vector"} 
+                draggable={true}
                 on:click={e => {
                     active = i;
                     setTimeout(handleInput, 1);
                 } } 
-                on:dragstart={e => shuffleVector = i}
+                on:dragstart={e => indexShuffleVector = i}
                 >{vec.icon}
             </button>
             <!-- svelte-ignore a11y-no-static-element-interactions -->
             <div 
-                class="positition-for-vector" 
+                class={ shuffleSpaceOver === i+1 ? "positition-for-vector over" : "positition-for-vector"}
                 on:dragover|preventDefault
-                on:drop|preventDefault={e => {} }
+                on:drop|preventDefault={e => {
+                    shuffleVectors(i+1);
+                    shuffleSpaceOver = undefined;
+                } }
+                on:dragenter={e => shuffleSpaceOver = i+1}
+                on:dragleave={e => shuffleSpaceOver = undefined}
             />
         {/each}
+        
     
         {#if $vectors.length < 5}
             <button class="new-vector" on:click={newVector}>
@@ -188,7 +221,7 @@ function shuffleVectors () {
     height: var(--size);
     border-radius: .4em;
     transform: scale(1);
-    background-color: transparent;
+    background-color: var(--color-canvas);
     border: .08em solid var(--color-content-C);
     transition: all 200ms ease-out;
 
@@ -210,8 +243,29 @@ function shuffleVectors () {
 .positition-for-vector {
     width: .4em;
     height: 100%;
-    background-color: var(--color-content-C);
+    background-color: transparent;
     border-radius: .1em;
+    z-index: 10;
+    transform: scaleX(1.8);
+
+    display: flex;
+    justify-content: center;
+
+}
+
+.positition-for-vector::before {
+    content: "";
+    background-color: var(--color-content);
+    width: .05em;
+    border-radius: .1em;
+    transform: scaleY(0);
+    opacity: 0;
+    transition: all 300ms ease-out;
+}
+
+.positition-for-vector.over::before {
+    transform: scaleY(1);
+    opacity: 1;
 }
 
 button.new-vector {

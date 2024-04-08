@@ -15,6 +15,12 @@ export const tasklist = writable([
         "type": "standard", 
             // standard - обычная задача
             // vector - задача только для векторов
+
+            // задачи векторов содержат только
+            // id
+            // title
+            // status
+            // type
     },
     {
         "id": 2,
@@ -407,5 +413,19 @@ export let per300 = writable([
 ])
 
 
-export let vectors = writable([])
+export let vectors = writable([
+    {
+        icon: "🎖️",
+        title: "test",
+        motivation: "",
+        tasks: [
+            {
+                "id": 31201,
+                "title": "Тренинг по лидерству",
+                "status": "wait",
+                "type": "vector",
+            },
+        ],
+    },
+])
 

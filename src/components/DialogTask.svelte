@@ -12,18 +12,18 @@ let isOpenAddition = false;
 
 
 // распаковка задачи
-export let task = {};
-// {
-//     "id": 2,
-//     "title": "Исследование рынка",
-//     "start": "2023-07-01",
-//     "finish": "2023-12-31",
-//     "finished": "2023-12-28",
-//     "deadline": "2024-03-12 15:15",
-//     "category": "Маркетинг",
-//     "status": "done",
-//     "importance": 1,
-// }
+export let task = {
+    "id": -1, // если (-1) значит отображается создаваемая сейчас задача
+    "title": "",
+    "start": "", // 2023-07-01
+    "finish": "", // 2023-12-31
+    "finished": "", // 2023-12-28
+    "deadline": "", // 2024-03-12 15:15
+    "category": "",
+    "status": "wait",
+    "importance": 0,
+    "type": "standard", 
+}
 let title = task.title;
 let status = task.status;
 let importance = task.importance;
@@ -174,7 +174,15 @@ onDestroy(_ => {
 
         <div class="mark">Title</div>
         <div class="title">
-            <input type="text" bind:value={title} >
+            <input 
+                type="text" 
+                bind:value={title} 
+                on:change={e => {
+                    if (title.length === 0) 
+                        title = `task ${task.id}`
+                }}
+                placeholder="new task"
+            >
         </div>
 
 
