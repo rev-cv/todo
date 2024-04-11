@@ -4,105 +4,122 @@ import { onDestroy } from 'svelte';
 import { isOpenDialog } from '../store/OpenDialog'
 import { tasklist, allCategories } from '../store/TestTaskList'
 import { shortMonthNames } from '../store/Date'
+import PickerDateTime from './PickerDateTime.svelte'
 
 // управление дополнительными всплывающими окнами
-let isOpenDeadline = false;
-let isOpenCategories = false;
 let isOpenAddition = false;
+
+let isOpenDeadline = false;
+let isOpenStartline = false;
+let isOpenTimeEstimate = false;
+let isOpenCategories = false;
+
+
+const timeEstimaties = [
+    ["×", 0], ["30m", 30], ["45m", 45], ["1h", 60],
+    ["2h", 120], ["3h", 180], ["5h", 300], ["8h", 480],
+]
 
 
 // распаковка задачи
 export let task = {
     "id": -1, // если (-1) значит отображается создаваемая сейчас задача
     "title": "",
-    "start": "", // 2023-07-01
-    "finish": "", // 2023-12-31
-    "finished": "", // 2023-12-28
-    "deadline": "", // 2024-03-12 15:15
+    "created": "",     // 2023-11-01
+    "startline": "",       // 2023-07-01
+    "finished": "",    // 2023-12-28
+    "deadline": "",    // 2024-03-12 15:15
+    "timeEstimate": 0, // minutes
     "category": "",
     "status": "wait",
     "importance": 0,
+    "isQueue": false,  // помещена задача в очередь? 
     "type": "standard", 
 }
-let title = task.title;
 let status = task.status;
-let importance = task.importance;
-let category = task.category;
+
+// распаковка значения старта
+let sDT = new Date();
+let isSED = false; // isExistsDate
+let isSET = false;
+if (task.startline != "") {
+    sDT = new Date(task.startline);
+    const [date, time] = task.startline.split(" ");
+    isSED = date != undefined
+    isSET = time != undefined
+}
 
 
 // распаковка значения дедлайна
 let dDT = new Date();
-let isED = false; // isExistsDate
-let isET = false;
-let dYear = 2024;
-let dMonth = 1;
-let dDay = 1;
-let dHour = 0;
-let dMin = 0;
-
+let isDED = false; // isExistsDate
+let isDET = false;
 if (task.deadline != "") {
     dDT = new Date(task.deadline);
     const [date, time] = task.deadline.split(" ");
-
-    if (date != undefined) {
-        isED = true;
-        dYear = dDT.getFullYear();
-        dMonth = dDT.getMonth() + 1;
-        dDay = dDT.getDate();
-    }
-
-    if (time != undefined) {
-        isET = true;
-        dHour = dDT.getHours();
-        dMin = dDT.getMinutes();
-    }
+    isDED = date != undefined
+    isDET = time != undefined
 }
 
-let textDeadline = "no deadline";
-function viewDeadline () {
-    if (!isED) {
-        textDeadline = "no deadline";
-    } else {
-        textDeadline = `${dYear}, ${dDay} ${shortMonthNames[dMonth - 1]}`
+
+function generateTextDateTime(date, isED, isET) {
+    let text = "- - -";
+
+    if (isED) {
+        const dYear = date.getFullYear();
+        const dMonth = date.getMonth() + 1;
+        const dDay = date.getDate();
+
+        text = `${dYear}, ${dDay} ${shortMonthNames[dMonth - 1]}`;
+
         if (isET) {
-            textDeadline += ` ${String(dHour).padStart(2, '0')}`
-            textDeadline += `:${String(dMin).padStart(2, '0')}`
+            const dHour = date.getHours();
+            const dMin = date.getMinutes();
+
+            text += ` ${String(dHour).padStart(2, '0')}`
+            text += `:${String(dMin).padStart(2, '0')}`
         }
     }
+
+    return text
 }
-if (isED)
-    viewDeadline()
+let textStart = generateTextDateTime(sDT, isSED, isSET);
+let textDeadline = generateTextDateTime(dDT, isDED, isDET);
 
 
-// управление выбором дедлайна
-function setDeadline () {
+// управление выбором старта и дедлайна
+function setStartline (date, isExistsDate, isExistsTime) {
+    // обработка закрытия дополнительного окна
+    isOpenAddition = false;
+    setTimeout(() => {
+        isOpenStartline = false;
+    }, 300)
+
+    sDT = date;
+    isSED = isExistsDate;
+    isSET = isExistsTime;
+
+    textStart = generateTextDateTime(sDT, isSED, isSET);
+}
+
+function setDeadline (date, isExistsDate, isExistsTime) {
     // обработка закрытия дополнительного окна
     isOpenAddition = false;
     setTimeout(() => {
         isOpenDeadline = false;
     }, 300)
-    
-    dDT = new Date(
-        dYear, dMonth-1, dDay, dHour, dMin, 0
-    )
 
-    dYear = dDT.getFullYear();
-    dMonth = dDT.getMonth() + 1;
-    dDay = dDT.getDate();
+    dDT = date;
+    isDED = isExistsDate;
+    isDET = isExistsTime;
 
-    viewDeadline()
+    textDeadline = generateTextDateTime(dDT, isDED, isDET);
 }
 
 
 function saveTask () {
 
-    const newTitle = title;
-    const newImportance = importance;
-    const newСategory = category;
     let finished = task.finished
-
-
-    // подготовка статуса
     let newStatus = status;
     if (newStatus != task.status) {
 
@@ -119,18 +136,16 @@ function saveTask () {
 
     // подготовка дедлайна
     let newDeadLine = "";
-    if (isED) {
-        const month = String(dMonth).padStart(2, '0');
-        const day = String(dDay).padStart(2, '0');
-        newDeadLine = `${dYear}-${month}-${day}`
-
-        if (isET) {
-            const hour = String(dHour).padStart(2, '0');
-            const minute = String(dMin).padStart(2, '0');
+    if (isDED) {
+        const month = String(dDT.getMonth() + 1).padStart(2, '0');
+        const day = String(dDT.getDate()).padStart(2, '0');
+        newDeadLine = `${dDT.getFullYear()}-${month}-${day}`
+        if (isDET) {
+            const hour = String(dDT.getHours()).padStart(2, '0');
+            const minute = String(dDT.getMinutes()).padStart(2, '0');
             newDeadLine += ` ${hour}:${minute}`
         }
     }
-
 
 
     tasklist.update(items => {
@@ -140,14 +155,10 @@ function saveTask () {
             item => item.id === task.id
         );
 
-        
 
         if (indexToUpdate !== -1) {
             newTasklist[indexToUpdate] = { 
                 ...newTasklist[indexToUpdate], 
-                    title: newTitle,
-                    importance: newImportance,
-                    category: newСategory,
                     status: newStatus,
                     finished: finished,
                     deadline: newDeadLine,
@@ -172,14 +183,14 @@ onDestroy(_ => {
 
     <div class="main-area">
 
-        <div class="mark">Title</div>
-        <div class="title">
+        <!-- <div class="mark">Title</div> -->
+        <div class="title-line">
             <input 
                 type="text" 
-                bind:value={title} 
+                bind:value={task.title} 
                 on:change={e => {
-                    if (title.length === 0) 
-                        title = `task ${task.id}`
+                    if (task.title.length === 0) 
+                        task.title = `task ${task.id}`
                 }}
                 placeholder="new task"
             >
@@ -187,11 +198,17 @@ onDestroy(_ => {
 
 
         <div class="mark">Importance</div>
-        <div class="importance">
-            {#each [["A", 1], ["B", 2], ["C", 3], ["×", 0]] as imp }
+        <div class="importance-line">
+            {#each [
+                ["A", 1, "Important and urgent"], 
+                ["B", 2, "Important but not urgent"], 
+                ["C", 3, "Urgent but not important"], 
+                ["×", 0, "Not urgent or important"]] 
+                as imp }
                 <button 
-                    class={importance === imp[1] ? `imp-${imp[1]} active` : `imp-${imp[1]}`}
-                    on:click={e => importance = imp[1]}
+                    class={task.importance === imp[1] ? `imp-${imp[1]} active` : `imp-${imp[1]}`}
+                    title={imp[2]}
+                    on:click={e => task.importance = imp[1]}
                     >{imp[0]}
                 </button>
             {/each}
@@ -199,14 +216,20 @@ onDestroy(_ => {
 
 
         <div class="mark">Status</div>
-        <div class="status-panel">
-            {#each ["wait", "done", "fail"] as cst }
+        <div class="status-line">
+            {#each ["done", "wait", "fail"] as cst }
                 <button 
                     class={status === cst ? `${cst} active` : cst}
                     on:click={e => status = cst}
                     >{cst}
                 </button>
             {/each}
+            <div class="v-line" />
+            <button
+                class={task.isQueue ? "queue active" : "queue"}
+                on:click={e => task.isQueue = !task.isQueue}
+                >queue
+            </button>
         </div>
         
 
@@ -217,161 +240,63 @@ onDestroy(_ => {
                     isOpenCategories = true;
                     isOpenAddition = true;
                 }}
-                >{`# ${category}`}
+                >{`# ${task.category}`}
             </button>
         </div>
 
+        <div class="time-line">
+            <div class="mark">Start</div>
+            <div class="mark">Deadline</div>
+            <div class="mark">Time estimate</div>
 
-        <div class="mark">Deadline</div>
-        <div class="deadline">
+            <button
+                on:click={e => {
+                    isOpenStartline = true;
+                    isOpenAddition = true;
+                }}
+                ><span>{textStart}</span>
+            </button>
 
             <button
                 on:click={e => {
                     isOpenDeadline = true;
                     isOpenAddition = true;
                 }}
-                >{textDeadline}
+                ><span>{textDeadline}</span>
+            </button>
+
+            <button
+                on:click={e => {
+                    isOpenAddition = true;
+                    isOpenTimeEstimate = true;
+                }}
+                ><span>{
+                    task.timeEstimate === 0 ? "×" :
+                        task.timeEstimate < 60 ? 
+                            `${task.timeEstimate}m` : 
+                                `${Math.ceil(task.timeEstimate / 60)}h` 
+                }</span>
             </button>
 
         </div>
-
-
+ 
         <div class="mark">Auto recreate</div>
 
         
 
     </div>
 
-    <div 
-        class={
-            isOpenAddition ? 
-                "additional-area" : "additional-area additional-area-closed"
-        }>
-
-        {#if isOpenDeadline }
-            <div class="deadline-select">
-
-                <div class="set-deadline">
-                    {#if isED }
-                        <span>{`${dYear}, ${dDay} ${shortMonthNames[dMonth-1]}`}</span>
-                        {#if isET }
-                            <span>
-                            {`${String(dHour).padStart(2, '0')}:${String(dMin).padStart(2, '0')}`}
-                            </span>
-                        {/if}
-                    {:else}
-                        <span>no deadline</span>
-                    {/if}
-                    <button on:click={setDeadline} >Ok</button>
-                </div>
-
-
-                <div class="col-y col-mark">year</div>
-                <div class="col-m col-mark">month</div>
-                <div class="col-d col-mark">day</div>
-                <div class="col-ho col-mark">hour</div>
-                <div class="col-mi col-mark">minute</div>
-
-
-                <div class="col-y">
-                    <button 
-                        class={ !isED ? "active" : "" }
-                        on:click={e => {
-                            isED = false;
-                            isET = false;
-                            dYear = new Date().getFullYear();
-                            dMonth = 1;
-                            dDay = 1;
-                            dHour = 0;
-                            dMin = 0;
-                        }}
-                        >×
-                    </button>
-                    {#each Array(15).fill().map((_, i) => i + 2024) as year }
-                        <button 
-                            class={dYear === year && isED ? "active" : ""}
-                            on:click={e => {
-                                dYear = year;
-                                isED = true;
-                            }}
-                            >{year}
-                        </button>
-                    {/each}
-                </div>
-
-                <div class="col-m">
-                    {#each Array(12).fill().map((_, i) => i + 1) as month }
-                        <button 
-                            class={dMonth === month && isED ? "active" : ""}
-                            on:click={e => {
-                                dMonth = month;
-                                isED = true;
-                            }}
-                            >{month}
-                        </button>
-                    {/each}
-                </div>
-
-                <div class="col-d">
-                    {#each Array(31).fill().map((_, i) => i + 1) as day }
-                        <button 
-                            class={dDay === day && isED ? "active" : ""}
-                            on:click={e => {
-                                dDay = day;
-                                isED = true;
-                            }}
-                            >{day}
-                        </button>
-                    {/each}
-                </div>
-
-                <div class="col-ho">
-                    <button 
-                        class={ !isET ? "active" : "" }
-                        on:click={e => {
-                            isET = false;
-                            dHour = 0;
-                            dMin = 0;
-                        }}
-                        >×
-                    </button>
-                    {#each Array(24).fill().map((_, i) => i) as hour }
-                        <button 
-                            class={dHour === hour && isET ? "active" : ""}
-                            on:click={e => {
-                                dHour = hour;
-                                isET = true;
-                            }}
-                            >{hour}
-                        </button>
-                    {/each}
-                </div>
-
-                <div class="col-mi">
-                    {#each Array(12).fill().map((_, i) => i * 5) as minute }
-                        <button 
-                            class={dMin === minute && isET ? "active" : ""}
-                            on:click={e => {
-                                dMin = minute;
-                                isET = true;
-                            }}
-                            >{minute}
-                        </button>
-                    {/each}
-                </div>
-
-                
-            </div>
-        {/if}
-
+    <div class={ isOpenAddition ? "additional" : "additional closed" }>
 
         {#if isOpenCategories }
+
             <div class="category-list">
                 {#each allCategories as item }
                     <button
+                        class={item === task.category ? "active" : ""}
                         on:click={e => {
                             isOpenAddition = false;
-                            category = item;
+                            task.category = item;
                             setTimeout(() => {
                                 isOpenCategories = false;
                             }, 300)
@@ -380,12 +305,47 @@ onDestroy(_ => {
                     </button>
                 {/each}
             </div>
+
+        {:else if isOpenStartline}
+
+            <PickerDateTime 
+                thisdate={sDT}
+                isExistsDate={isSED}
+                isExistsTime={isSET}
+                on:setdate={e => setStartline(...e.detail)}
+            />
+
+        {:else if isOpenDeadline}
+
+            <PickerDateTime 
+                thisdate={dDT}
+                isExistsDate={isDED}
+                isExistsTime={isDET}
+                on:setdate={e => setDeadline(...e.detail)}
+            />
+        
+        {:else if isOpenTimeEstimate}
+
+            <div class="mark">Scheduled time for task</div>
+            <div class="time-estimate-list">
+                {#each timeEstimaties as est }
+                    <button
+                        on:click={e => {
+                            isOpenAddition = false;
+                            task.timeEstimate = est[1];
+                            setTimeout(() => {
+                                isOpenTimeEstimate = false;
+                            }, 300)
+                        }}>{est[0]}
+                    </button>
+                {/each}
+            </div>
+            
         {/if}
-
     </div>
-
-
 </div>
+
+
 
 <style>
 
@@ -396,39 +356,7 @@ onDestroy(_ => {
     animation-duration: 200ms;
 }
 
-.main-area,
-.additional-area {
-    font-size: 1.2rem;
-
-    padding: 1em;
-
-    cursor: default;
-
-    color: var(--color-content-B);
-    background-color: var(--color-block);
-    border-radius: .8em;
-    box-shadow: var(--color-block-shadow);
-
-    width: 20em;
-    height: 20em;
-
-    display: flex;
-    flex-direction: column;
-
-    overflow: hidden;
-}
-
-.additional-area {
-    position: absolute;
-    transform-origin: bottom;
-    transition: transform 200ms ease-out;
-}
-
-.additional-area-closed {
-    transform: scaleY(0);
-}
-
-.closing {
+.widget.closing {
     animation-name: close-widget;
     animation-duration: 200ms;
     animation-fill-mode: both;
@@ -453,25 +381,67 @@ onDestroy(_ => {
     }
 }
 
+
+
+/* WIDGET FRAME */
+
+.widget > .main-area,
+.widget > .additional {
+    font-size: 1.2rem;
+
+    padding: 1em;
+
+    cursor: default;
+
+    color: var(--color-content-B);
+    background-color: var(--color-block);
+    border-radius: .8em;
+    box-shadow: var(--color-block-shadow);
+
+    width: 20em;
+    height: 22em;
+
+    display: flex;
+    flex-direction: column;
+
+    overflow: hidden;
+}
+
+.widget > .additional {
+    position: absolute;
+    transform-origin: bottom;
+    transition: transform 200ms ease-out;
+    background-color: var(--color-block-transparent);
+    backdrop-filter: blur(6px);
+}
+
+.widget > .additional.closed {
+    transform: scaleY(0);
+}
+
+
+
+/* MARK LINE */
+
 .mark {
+    font-size: .6rem;
     margin-top: 1em;
-    font-size: .5em;
     font-weight: 700;
     opacity: .5;
     user-select: none;
 }
 
-.mark:first-child {
-    margin-top: 0;
-}
 
-.title {
+
+/* TITLE LINE */
+
+.widget > .main-area > .title-line {
     font-size: .8em;
     min-width: 20em;
     display: flex;
 }
 
-.title > input {
+.widget > .main-area > .title-line > input {
     flex-grow: 1;
     font-size: 1.2em;
     padding: .6em .4em .4em .6em;
@@ -482,44 +452,25 @@ onDestroy(_ => {
     transition: box-shadow 500ms ease-out;
 }
 
-.title > input:focus {
+.widget > .main-area > .title-line > input:focus {
     box-shadow: var(--color-block-shadow-inset);
 }
 
-.categories,
-.status-panel, 
-.importance,
-.deadline {
+
+
+/* IMPORTANCE LINE */
+
+.widget > .main-area > .importance-line {
     display: grid;
+    grid-template-columns: repeat(4, 1fr);
     grid-auto-rows: 2.5em;
     grid-gap: .3em;
 
     font-size: .7em;
     margin: .4em 0;
-
-    border: .15em solid transparent;
-    border-radius: .8em;
-
-    transition: border-color 200ms ease-out;
 }
 
-.importance {
-    grid-template-columns: repeat(4, 1fr);
-}
-
-.status-panel {
-    grid-template-columns: repeat(3, 1fr);
-}
-
-.categories {
-    grid-template-columns: 1fr;
-    grid-auto-rows: 2.8em;
-}
-
-.categories > button,
-.status-panel > button,
-.importance > button,
-.deadline > button {
+.widget > .main-area > .importance-line > button {
     font-size: 1em;
     user-select: none;
 
@@ -535,15 +486,7 @@ onDestroy(_ => {
     transition: background-color 500ms ease-out;
 }
 
-.categories > button {
-    text-align: left;
-    padding: .2em 0 0 1em;
-}
-
-.categories > button::after,
-.status-panel > button::after,
-.importance > button::after,
-.deadline > button::after {
+.widget > .main-area > .importance-line > button::after {
     content: "";
     position: absolute;
     top: 0;
@@ -556,48 +499,223 @@ onDestroy(_ => {
     transition: opacity 200ms ease-out;
 }
 
-.categories > button:hover::after,
-.status-panel > button:hover::after,
-.importance > button:hover::after,
-.deadline > button:hover::after {
+.widget > .main-area > .importance-line > button:hover::after {
     opacity: .3;
 }
 
-.wait.active,
-.done.active,
-.fail.active,
-.imp-1.active,
-.imp-2.active,
-.imp-3.active,
-.imp-0.active {
+.widget > .main-area > .importance-line > button.imp-3.active {
+    background-color: var(--color-importance-C);
     color: var(--color-block);
 }
 
-.wait.active,
-.imp-3.active {
-    background-color: var(--color-importance-C);
-}
-
-.done.active {
-    background-color: var(--color-importance-D);
-}
-
-.fail.active,
-.imp-1.active {
+.widget > .main-area > .importance-line > button.imp-1.active {
     background-color: var(--color-importance-A);
+    color: var(--color-block);
 }
 
-.imp-2.active {
+.widget > .main-area > .importance-line > button.imp-2.active {
     background-color: var(--color-importance-B);
+    color: var(--color-block);
 }
 
-.imp-0.active {
+.widget > .main-area > .importance-line > button.imp-0.active {
     background-color: var(--color-importance-X);
+    color: var(--color-block);
 }
 
 
 
-.category-list {
+/* STATUS LINE */
+
+.widget > .main-area > .status-line {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr .1fr 1fr;
+    grid-auto-rows: 2.5em;
+    grid-gap: .3em;
+
+    font-size: .7em;
+    margin: .4em 0;
+}
+
+.widget > .main-area > .status-line > button {
+    font-size: 1em;
+    user-select: none;
+
+    position: relative;
+    overflow: hidden;
+
+    background-color: transparent;
+    color: var(--color-content-B);
+
+    border: .14em solid var(--color-content-C);
+    border-radius: .6em;
+
+    transition: background-color 500ms ease-out;
+}
+
+.widget > .main-area > .status-line > button::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    background-color: var(--color-content-C);
+
+    opacity: 0;
+    transition: opacity 200ms ease-out;
+}
+
+.widget > .main-area > .status-line > button:hover::after {
+    opacity: .3;
+}
+
+.widget > .main-area > .status-line > button.wait.active {
+    background-color: var(--color-importance-C);
+    color: var(--color-block);
+}
+
+.widget > .main-area > .status-line > button.done {
+    border-radius: .6em .1em .1em .6em;
+}
+
+.widget > .main-area > .status-line > button.wait {
+    border-radius: .2em;
+}
+
+.widget > .main-area > .status-line > button.fail {
+    border-radius: .1em .6em .6em .1em;
+}
+
+.widget > .main-area > .status-line > button.done.active {
+    background-color: var(--color-importance-D);
+    color: var(--color-block);
+}
+
+.widget > .main-area > .status-line > button.fail.active {
+    background-color: var(--color-importance-A);
+    color: var(--color-block);
+}
+
+.widget > .main-area > .status-line > button.queue.active {
+    background-color: var(--color-importance-B);
+    color: var(--color-block);
+}
+
+.widget > .main-area > .status-line > .v-line {
+    justify-self: center;
+    background-color: var(--color-content-C);
+    width: .1em;
+    height: 100%;
+}
+
+
+
+
+/* CATEGORIES LINE */
+
+.widget > .main-area > .categories {
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-auto-rows: 2.8em;
+    grid-gap: .3em;
+
+    font-size: .7em;
+    margin: .4em 0;
+}
+
+.widget > .main-area > .categories > button  {
+    font-size: 1em;
+    text-align: left;
+
+    user-select: none;
+
+    position: relative;
+    overflow: hidden;
+
+    background-color: transparent;
+    color: var(--color-content-B);
+
+    border: .14em solid var(--color-content-C);
+    border-radius: .6em;
+    padding: .2em 0 0 1em;
+
+    transition: background-color 500ms ease-out;
+}
+
+.widget > .main-area > .categories > button::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    background-color: var(--color-content-C);
+
+    opacity: 0;
+    transition: opacity 200ms ease-out;
+}
+
+.widget > .main-area > .categories > button:hover::after {
+    opacity: .3;
+}
+
+
+
+/* TIME LINE */
+
+.widget > .main-area > .time-line {
+    display: grid;
+    grid-template-columns: 1fr 1fr .6fr;
+    grid-template-rows: auto;
+    grid-auto-rows: 2em;
+    grid-gap: .3em;
+}
+
+.widget > .main-area > .time-line > button {
+    font-size: .8em;
+    user-select: none;
+
+    position: relative;
+    overflow: hidden;
+
+    background-color: transparent;
+    color: var(--color-content-B);
+
+    border: .14em solid var(--color-content-C);
+    border-radius: .6em;
+
+    transition: background-color 500ms ease-out;
+}
+
+.widget > .main-area > .time-line > button > span {
+    font-size: .7em;
+    font-weight: 700;
+}
+
+.widget > .main-area > .time-line > button::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    background-color: var(--color-content-C);
+
+    opacity: 0;
+    transition: opacity 200ms ease-out;
+}
+
+.widget > .main-area > .time-line > button:hover::after {
+    opacity: .3;
+}
+
+
+
+
+/* CATEGORY WINDOW */
+
+.widget > .additional > .category-list {
     display: flex;
     flex-direction: column;
 
@@ -606,7 +724,7 @@ onDestroy(_ => {
     overflow-y: auto;
 }
 
-.category-list > button {
+.widget > .additional > .category-list > button {
     font-size: .7em;
     text-align: left;
     background-color: transparent;
@@ -618,69 +736,41 @@ onDestroy(_ => {
     border-radius: .4em;
 }
 
-.deadline-select {
-    display: grid;
-    grid-template-columns: 2fr repeat(5, 1fr);
-    grid-auto-flow: dense;
-    justify-content: center;
-    align-content: center;
-    gap: .2em;
-    height: 100%;
-}
-
-.col-y {
-    grid-column: 1 / 2;
-}
-
-.col-m {
-    grid-column: 2 / 3;
-}
-
-.col-d {
-    grid-column: 3 / 4;
-}
-
-.col-ho {
-    grid-column: 5 / 6;
-}
-
-.col-mi {
-    grid-column: 6 / 7;
-}
-
-.set-deadline {
-    grid-column: 1 / -1;
-
-    /* background-color: yellowgreen; */
-
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-
-}
-
-.col-y, .col-m, .col-d, .col-ho, .col-mi {
-    display: flex;
-    flex-direction: column;
-    overflow: auto;
-}
-
-.deadline-select button {
-    font-size: .7em;
-    background-color: transparent;
-    color: var(--color-content-B);
-    margin: .2em;
-    border-radius: .4em;
-    border: .14em solid var(--color-content-C);
-    padding: .4em;
-    position: relative;
-}
-
-.deadline-select button.active {
+.widget > .additional > .category-list > button.active {
     background-color: var(--color-accent);
 }
 
-.deadline-select > div > button::after {
+
+
+/* TIME ESTIMATE WINDOW */
+
+.widget > .additional > .time-estimate-list {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    grid-auto-rows: 2.5em;
+    grid-gap: .3em;
+
+    font-size: .7em;
+    margin: 1.4em 0;
+}
+
+.widget > .additional > .time-estimate-list > button {
+    font-size: 1em;
+    user-select: none;
+
+    position: relative;
+    overflow: hidden;
+
+    background-color: transparent;
+    color: var(--color-content-B);
+
+    border: .14em solid var(--color-content-C);
+    border-radius: .6em;
+
+    transition: background-color 500ms ease-out;
+}
+
+.widget > .additional > .time-estimate-list > button::after {
     content: "";
     position: absolute;
     top: 0;
@@ -693,21 +783,11 @@ onDestroy(_ => {
     transition: opacity 200ms ease-out;
 }
 
-.deadline-select > div >  button:hover::after {
+.widget > .additional > .time-estimate-list > button:hover::after {
     opacity: .3;
 }
 
-.col-mark {
-    margin: 1em 0 .5em 0;
-    font-size: .5em;
-    font-weight: 700;
-    opacity: .5;
-    user-select: none;
-    text-align: center;
-}
 
-.set-deadline > button {
-    padding: .6em;
-}
+
 
 </style>

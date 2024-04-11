@@ -2,13 +2,14 @@
 // @ts-nocheck
 import { vectors } from '../store/TestTaskList'
 import ItemTask from './ItemTask.svelte'
-import EmojiPicker from './EmojiPicker.svelte'
+import EmojiPicker from './PickerEmoji.svelte'
 import Tulle from './Tulle.svelte'
 import Confirmation from './DialogConfirmation.svelte'
 
 
 let active = 0;
 let isViewMotivation = false;
+let isViewYearEndReport = false;
 let isDeletionWarning = false;
 
 let textarea; // <textarea>
@@ -37,6 +38,7 @@ function newVector () {
     vectors.update(items => {
         if (items.length < 5)
             items.push({
+                id: items.length,
                 icon: "🎖️",
                 title: items.length === 0 ? "my first vector" : "new vector",
                 motivation: "",
@@ -54,6 +56,7 @@ function delVector () {
         items = items.filter((item, index) => index != active);
         if (items.length === 0)
             items.push({
+                id: 0,
                 icon: "🎖️",
                 title: items.length === 0 ? "my first vector" : "new vector",
                 motivation: "",
@@ -67,6 +70,9 @@ function delVector () {
 
 function shuffleVectors (onPos) {
     // вектор с индексом indexShuffleVector на позицию onPos
+
+    const currentActiveID = $vectors[active].id;
+
     if (indexShuffleVector != undefined){
         vectors.update(items => {
             let arr = [...items];
@@ -78,6 +84,12 @@ function shuffleVectors (onPos) {
         });
         indexShuffleVector = undefined;
     }
+
+    $vectors.forEach((elem, index) => {
+        if (elem.id === currentActiveID) {
+            active = index; 
+        }
+    })
 }
 </script>
 
@@ -183,6 +195,30 @@ function shuffleVectors (onPos) {
             bind:this={textarea}
         />
     </div>
+
+
+    <div class="block">
+        <div class="descr-block">
+            <button 
+                class={isViewYearEndReport ? "" : "active"}
+                on:click={e => {
+                    isViewYearEndReport = !isViewYearEndReport;
+                    setTimeout(handleInput, 100);
+                }}
+                ><span>Year-end report</span>
+                <svg><use xlink:href="#ico-arrow"/></svg>
+            </button>
+        </div>
+        
+        <textarea 
+            class={isViewYearEndReport ? "year-end-report view" : "year-end-report"}
+            on:input={handleInput}
+            bind:value={$vectors[active].report}
+            bind:this={textarea}
+        />
+    </div>
+
+    
 </div>
 
 
@@ -371,6 +407,7 @@ button.add-new-task-for-vector > svg {
     margin: 0 .4em 0 0;
 }
 
+.year-end-report,
 .motivation {
     font-size: .8em;
     background-color: transparent;
@@ -385,12 +422,14 @@ button.add-new-task-for-vector > svg {
     transition: all 300ms ease-out;
 }
 
+.year-end-report.view,
 .motivation.view {
     max-height: 500px;
     opacity: .8;
     padding: 1em;
 }
 
+.year-end-report:focus,
 .motivation:focus {
     box-shadow: var(--color-block-shadow-inset);
     opacity: 1;

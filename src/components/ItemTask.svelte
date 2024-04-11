@@ -1,4 +1,5 @@
 <script>
+// @ts-nocheck
 import { shortMonthNames } from '../store/Date'
 import { tasklist } from '../store/TestTaskList'
 import {createEventDispatcher} from 'svelte';
@@ -12,7 +13,6 @@ export let task = {
     "id": -1, // если (-1) значит отображается создаваемая сейчас задача
     "title": "Исследование рынка",
     "start": "", // 2023-07-01
-    "finish": "", // 2023-12-31
     "finished": "", // 2023-12-28
     "deadline": "", // 2024-03-12 15:15
     "category": "",

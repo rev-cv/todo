@@ -189,10 +189,10 @@ function sortTaskList(arg="creation"){
 
     {:else if groupBy === "importance"}
         {#each [
-            ["No matter what it takes to do this!", 1], 
-            ["It's better to do it now than later!", 2], 
-            ["This will be the most productive decade!", 3], 
-            ["Tasks of uncertain importance.", 0]] as group }
+            ["Important and urgent", 1], 
+            ["Important but not urgent", 2], 
+            ["Urgent but not important", 3], 
+            ["Not urgent or important", 0]] as group }
             <div class="group">{group[0]}</div>
             {#each $tasklist as task }
                 {#if task.importance === group[1]}
@@ -202,6 +202,9 @@ function sortTaskList(arg="creation"){
         {/each}
     {/if}
 </div>
+
+
+<h1>ИТОГИ ДЕКАДЫ</h1>
 
 <style>
 
