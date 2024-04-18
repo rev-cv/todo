@@ -32,70 +32,99 @@ let menu = [
 
 <style>
 
-    header {
+header {
 
-        font-size: 1rem;
-        flex-shrink: 0;
+    font-size: 1rem;
+    flex-shrink: 0;
 
-        
-        background-color: var(--color-block);
-        box-shadow: var(--color-block-shadow);
+    
+    background-color: var(--color-block);
+    box-shadow: var(--color-block-shadow);
 
-        margin: 1em;
-        padding: .2em 0;
-        border-radius: .8em;
+    margin: 1em;
+    padding: .2em 0;
+    border-radius: .8em;
 
-        display: flex;
-        flex-direction: column;
-    }
+    display: flex;
+    flex-direction: column;
+}
 
-    header > button {
-        background-color: var(--color-block);
-        width: 2.4em;
-        height: 2.4em;
+header > button {
+    background-color: var(--color-block);
+    width: 2.4em;
+    height: 2.4em;
 
-        margin: .2em .4em;
+    margin: .2em .4em;
 
-        display: flex;
-        justify-content: center;
-        align-items: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 
-        border-radius: .6em;
+    border-radius: .6em;
 
-        transition: 0.08s ease-out;
+    transition: 200ms ease-out;
 
-        border: .1em solid rgba(0, 0, 0, .2);
+    border: .1em solid rgba(0, 0, 0, .2);
 
-        font-size: 1em;
-    }
+    font-size: 1em;
 
-    header > .active {
-        background-color: var(--color-accent);
-    }
+    position: relative;
+    overflow: hidden;
+}
 
-    header > button:hover {
-        box-shadow: var(--color-block-shadow-on-block);
-        border: .1em solid rgba(0, 0, 0, 0);
-        transform: scale(1.1);
-    }
+header > button::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    background-color: var(--color-content-C);
 
-    header > button:active {
-        transform: scale(.9);
-    }
+    opacity: 0;
+    transition: opacity 200ms ease-out;
+}
 
-    header > button > svg {
-        width: 50%;
-        height: 50%;
-    }
+header > button:hover::after {
+    opacity: .3;
+}
 
-    header > .active:hover, header > .active:active {
-        border: .1em solid rgba(0, 0, 0, .2);
-        box-shadow: none;
-        transform: scale(1);
-    }
+header > .active {
+    background-color: var(--color-accent);
+}
 
-    .stretch {
-        flex-grow: 1;
-    }
+header > button:hover {
+    box-shadow: var(--color-block-shadow-on-block);
+    border: .1em solid rgba(0, 0, 0, 0);
+}
+
+header > button:hover > svg {
+    transform: scale(1.2);
+}
+
+/* header > button:active {
+    transform: scale(.9);
+} */
+
+header > button > svg {
+    width: 50%;
+    height: 50%;
+    transition: 200ms ease-out;
+}
+
+header > .active:hover, 
+header > .active:active {
+    border: .1em solid rgba(0, 0, 0, .2);
+    box-shadow: none;
+    transform: scale(1);
+}
+
+header > button.active > svg {
+    transform: scale(1.2);
+}
+
+.stretch {
+    flex-grow: 1;
+}
 
 </style>

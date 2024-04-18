@@ -1,10 +1,13 @@
 <script>
 // @ts-nocheck
+import { createEventDispatcher } from 'svelte';
+const dispatch = createEventDispatcher();
 import { onDestroy } from 'svelte';
 import { isOpenDialog } from '../store/OpenDialog'
 import { tasklist, allCategories } from '../store/TestTaskList'
 import { shortMonthNames } from '../store/Date'
 import PickerDateTime from './PickerDateTime.svelte'
+import Confirmation from './DialogConfirmation.svelte'
 
 // управление дополнительными всплывающими окнами
 let isOpenAddition = false;
@@ -13,6 +16,7 @@ let isOpenDeadline = false;
 let isOpenStartline = false;
 let isOpenTimeEstimate = false;
 let isOpenCategories = false;
+let isDeletionWarning = false;
 
 
 const timeEstimaties = [
@@ -26,7 +30,7 @@ export let task = {
     "id": -1, // если (-1) значит отображается создаваемая сейчас задача
     "title": "",
     "created": "",     // 2023-11-01
-    "startline": "",       // 2023-07-01
+    "startline": "",   // 2023-07-01
     "finished": "",    // 2023-12-28
     "deadline": "",    // 2024-03-12 15:15
     "timeEstimate": 0, // minutes
@@ -117,7 +121,9 @@ function setDeadline (date, isExistsDate, isExistsTime) {
 }
 
 
-function saveTask () {
+function UPDATE () {
+
+    // в дальнейшем данная функция должна будет взаимодействовать с базой данной
 
     let finished = task.finished
     let newStatus = status;
@@ -164,13 +170,56 @@ function saveTask () {
                     deadline: newDeadLine,
             };
         }
-        return newTasklist;
+        return newTasklist
     });
 }
 
 
+function CREATE () {
+
+    // тестовая функция добавления новой задачи
+    // в дальнейшем данная функция должна будет взаимодействовать с базой данной
+
+    if (task.title != ""){
+
+        task.id = Date.now();
+
+        isOpenDialog.set(false)
+        setTimeout(() => {
+            dispatch('closeDialog')
+        }, 200)
+
+        tasklist.update(items => {
+            items.push(task)
+            return items
+        });
+    }
+}
+
+
+function DELETE() {
+
+    // в дальнейшем данная функция должна будет взаимодействовать с базой данной
+
+    setTimeout(_ => {
+        isOpenDialog.set(false)
+    }, 100)
+    
+
+    setTimeout(_ => {
+        dispatch('closeDialog')
+    }, 400)
+
+    setTimeout(() => {
+        tasklist.update(items => {
+            return items.filter(elem => elem.id != task.id)
+        });
+    }, 400)
+}
+
+
 onDestroy(_ => {
-    saveTask()
+    UPDATE()
 })
 
 
@@ -240,7 +289,7 @@ onDestroy(_ => {
                     isOpenCategories = true;
                     isOpenAddition = true;
                 }}
-                >{`# ${task.category}`}
+                >{task.category === "" ? "×" : `# ${task.category}`}
             </button>
         </div>
 
@@ -280,9 +329,28 @@ onDestroy(_ => {
 
         </div>
  
-        <div class="mark">Auto recreate</div>
+        <!-- <div class="mark">Auto recreate</div> -->
 
-        
+        <!-- 
+            отсчет от 
+                - дедлайн         в часах | днях | месяцах
+                - финиш           в часах | днях | месяцах
+                - начала недели   в часах | днях | месяцах + день недели
+                - начала декады   
+                - начала месяца
+         -->
+
+        {#if task.id === -1}
+            <div class="btn-create-new-task">
+                <button on:click={CREATE}>create</button>
+            </div>
+        {:else}
+            <div class="btn-delete-new-task">
+                <button on:click={e => isDeletionWarning = true}>
+                    <svg><use xlink:href="#ico-delete-in-basket" /></svg>
+                </button>
+            </div>
+        {/if}
 
     </div>
 
@@ -301,7 +369,7 @@ onDestroy(_ => {
                                 isOpenCategories = false;
                             }, 300)
                         }}
-                        >{`# ${item}`}
+                        >{item === "" ? "×" : `# ${item}`}
                     </button>
                 {/each}
             </div>
@@ -345,6 +413,54 @@ onDestroy(_ => {
     </div>
 </div>
 
+
+{#if isDeletionWarning}
+    <Confirmation
+        on:confirm={DELETE}
+        on:noConfirm={e => isDeletionWarning = false}
+        >
+        <div class="del-message">
+            <div class="id">id: {task.id}</div>
+            <div class="title">«{task.title}»</div>
+            <div class="question">Delete task?</div>
+        </div>
+    </Confirmation>
+{/if}
+
+
+<svelte:window on:keydown={e => {
+
+    if (task.id === -1 && e.ctrlKey && e.key.toLowerCase() === 's'){
+        e.preventDefault();
+        CREATE()
+
+
+    } else if (e.key.toLowerCase() === "escape") {
+
+        if (isOpenAddition) {
+            isOpenAddition = false;
+            setTimeout(() => {
+                isOpenDeadline = false;
+                isOpenStartline = false;
+                isOpenTimeEstimate = false;
+                isOpenCategories = false;
+            }, 300)
+        } else {
+            isOpenDialog.set(false)
+            setTimeout(_ => {
+                dispatch('closeDialog')
+            }, 200)
+        }
+
+
+    } else if (e.key.toLowerCase() === "s") {
+        e.preventDefault();
+        isOpenDialog.set(false)
+        setTimeout(_ => {
+            dispatch('closeDialog')
+        }, 200)
+    }
+}} />
 
 
 <style>
@@ -399,7 +515,7 @@ onDestroy(_ => {
     box-shadow: var(--color-block-shadow);
 
     width: 20em;
-    height: 22em;
+    height: 21em;
 
     display: flex;
     flex-direction: column;
@@ -576,7 +692,7 @@ onDestroy(_ => {
 }
 
 .widget > .main-area > .status-line > button.done {
-    border-radius: .6em .1em .1em .6em;
+    border-radius: .6em .2em .12em .6em;
 }
 
 .widget > .main-area > .status-line > button.wait {
@@ -584,7 +700,7 @@ onDestroy(_ => {
 }
 
 .widget > .main-area > .status-line > button.fail {
-    border-radius: .1em .6em .6em .1em;
+    border-radius: .2em .6em .6em .2em;
 }
 
 .widget > .main-area > .status-line > button.done.active {
@@ -788,6 +904,95 @@ onDestroy(_ => {
 }
 
 
+/* SAVE BUTTON LINE */
+
+.btn-create-new-task,
+.btn-delete-new-task {
+    font-size: .7em;
+    margin: 1.4em 0;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.btn-delete-new-task > button,
+.btn-create-new-task > button {
+    font-size: 1em;
+    text-align: left;
+
+    user-select: none;
+
+    position: relative;
+    overflow: hidden;
+
+    background-color: transparent;
+    color: var(--color-content-B);
+
+    border: .14em solid var(--color-content-C);
+    border-radius: .6em;
+    padding: .54em 1em .5em;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    align-self: flex-end;
+}
+
+.btn-delete-new-task > button > svg {
+    width: 1em;
+    height: 1em;
+}
+
+.btn-delete-new-task > button {
+    align-self: flex-start;
+    padding: .7em;
+}
 
 
+.btn-create-new-task > button::after,
+.btn-delete-new-task > button::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    background-color: var(--color-content-C);
+
+    opacity: 0;
+    transition: opacity 200ms ease-out;
+}
+
+.btn-delete-new-task > button::after {
+    background-color: var(--color-importance-A);
+}
+
+.btn-create-new-task > button:hover::after,
+.btn-delete-new-task > button:hover::after {
+    opacity: .3;
+}
+
+
+
+/* DELETE QUESTIOM */
+
+.del-message > .id {
+    font-size: .5em;
+    opacity: .5;
+    text-align: center;
+}
+
+.del-message > .title {
+    font-size: 1em;
+    font-weight: 700;
+    padding: 1em 0;
+    text-align: center;
+}
+
+.del-message > .question {
+    font-size: .8em;
+    text-align: center;
+}
 </style>

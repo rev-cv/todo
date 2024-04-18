@@ -114,17 +114,19 @@ function changeStatus(){
 </div>
 
 
-{#if isOpenedDialog}
-    {#if task.type === "standard"}
-        <Tulle on:closeDialog={e => isOpenedDialog = false} >
-            <DialogTask task={task} />
-        </Tulle>
-    {:else if task.type === "vector"}
-        <Tulle on:closeDialog={e => isOpenedDialog = false} >
-            <DialogTaskVector task={task} />
-        </Tulle>
-    {/if}
+{#if isOpenedDialog && task.type === "standard"}
+    <Tulle on:closeDialog={e => isOpenedDialog = false} escTrue={false}>
+        <DialogTask 
+            task={task} 
+            on:closeDialog={e => isOpenedDialog = false}
+        />
+    </Tulle>
+{:else if isOpenedDialog && task.type === "vector"}
+    <Tulle on:closeDialog={e => isOpenedDialog = false} >
+        <DialogTaskVector task={task} />
+    </Tulle>
 {/if}
+
 
 <style>
 

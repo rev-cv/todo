@@ -447,7 +447,7 @@ export const tasklist = writable([
 ]);
 
 
-export let allCategories = [];
+export let allCategories = ["", ];
 tasklist.subscribe(items => {
     items.forEach(item => {
         if (!allCategories.includes(item.category))
@@ -492,4 +492,6 @@ export let vectors = writable([
         ],
     },
 ])
+
+export let openedVector = writable(0);
 

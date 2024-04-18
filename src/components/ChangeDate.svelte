@@ -69,10 +69,12 @@ function changedate (arg = ".") {
 
 
 <style>
-.btn-back, .btn-now, .btn-next, .btn-select-day {
+.btn-back, 
+.btn-now, 
+.btn-next, 
+.btn-select-day {
 
     font-size: 1rem;
-
 
     background-color: var(--color-block);
     /* box-shadow: var(--color-block-shadow); */
@@ -90,16 +92,40 @@ function changedate (arg = ".") {
     height: 2.4em;
 
     transition: transform 100ms ease-out;
+
+    position: relative;
+    overflow: hidden;
 }
 
-.btn-back:hover, .btn-now:hover, .btn-next:hover, .btn-select-day:hover {
-    transform: scale(1.05);
+.btn-back::after, 
+.btn-now::after, 
+.btn-next::after, 
+.btn-select-day::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    background-color: var(--color-content-C);
+
+    opacity: 0;
+    transition: opacity 200ms ease-out;
+}
+
+.btn-back:hover::after, 
+.btn-now:hover::after, 
+.btn-next:hover::after, 
+.btn-select-day:hover::after {
+    overflow: .3;
+}
+
+.btn-back:hover, 
+.btn-now:hover, 
+.btn-next:hover, 
+.btn-select-day:hover {
     box-shadow: var(--color-block-shadow-on-block);
     border: .1em solid rgba(0, 0, 0, 0);
-}
-
-.btn-back:active, .btn-now:active, .btn-next:active, .btn-select-day:active {
-    transform: scale(.9);
 }
 
 .btn-select-day {

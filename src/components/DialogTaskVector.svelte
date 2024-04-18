@@ -1,12 +1,52 @@
 <script>
+// @ts-nocheck
+import { vectors, openedVector } from '../store/TestTaskList'
 import { isOpenDialog } from '../store/OpenDialog'
+import { onDestroy } from 'svelte';
+
 
 export let task = {
     "id": -1, // если (-1) значит отображается создаваемая сейчас задача
-    "title": "new task",
+    "title": "",
     "status": "wait",
     "type": "vector", 
 };
+
+
+function UPDATE () {
+    vectors.update(items => {
+        let vec = items.find( elem => elem.id === $openedVector)
+        vec.tasks.forEach(item => {
+            if (item.id === task.id) {
+                item.title = task.title;
+                item.status = task.status;
+            }
+        })
+        return [...items]
+    })
+}
+
+
+function CREATE () {
+    if (task.title != "") {
+        vectors.update(items => {
+            let vec = items.find( elem => elem.id === $openedVector)
+            task.id = Date.now();
+            vec.tasks.push(task)
+            return [...items]
+        })
+    }
+}
+
+
+onDestroy(_ => {
+
+    if (task.id === -1) {
+        CREATE()
+    } else {
+        UPDATE()
+    }
+})
 
 </script>
 
@@ -19,7 +59,7 @@ export let task = {
     <div class="main-area">
 
 
-        <div class="mark">Title</div>
+        <!-- <div class="mark">Title</div> -->
         <div class="title">
             <input 
                 type="text" 
@@ -33,9 +73,9 @@ export let task = {
         </div>
 
 
-        <div class="mark">Status</div>
+        <!-- <div class="mark">Status</div> -->
         <div class="status-panel">
-            {#each ["wait", "done", "fail"] as cst }
+            {#each ["done", "wait", "fail"] as cst }
                 <button 
                     class={task.status === cst ? `${cst} active` : cst}
                     on:click={e => task.status = cst}
@@ -203,6 +243,18 @@ export let task = {
 
 .fail.active {
     background-color: var(--color-importance-A);
+}
+
+button.done {
+    border-radius: .6em .1em .1em .6em;
+}
+
+button.wait {
+    border-radius: .2em;
+}
+
+button.fail {
+    border-radius: .1em .6em .6em .1em;
 }
 </style>
     

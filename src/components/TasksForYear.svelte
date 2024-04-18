@@ -1,16 +1,20 @@
 <script>
 // @ts-nocheck
-import { vectors } from '../store/TestTaskList'
+import { vectors, openedVector } from '../store/TestTaskList'
 import ItemTask from './ItemTask.svelte'
 import EmojiPicker from './PickerEmoji.svelte'
-import Tulle from './Tulle.svelte'
 import Confirmation from './DialogConfirmation.svelte'
+import Tulle from './Tulle.svelte'
+import DialogTaskVector from './DialogTaskVector.svelte'
 
 
 let active = 0;
 let isViewMotivation = false;
 let isViewYearEndReport = false;
-let isDeletionWarning = false;
+let isDeleteVectorWarning = false;
+let isDeleteTaskWarning = false;
+let taskToBeDeleted = ["title", 0]; // title , id_task
+let isOpenNewTaskForVector = false;
 
 let textarea; // <textarea>
 
@@ -47,6 +51,7 @@ function newVector () {
         return items;
     });
     active = $vectors.length - 1;
+    openedVector.set($vectors[active].id)
 }
 if ($vectors.length === 0) newVector ();
 
@@ -65,6 +70,16 @@ function delVector () {
         return items;
     });
     active = 0 < active ? active - 1 : 0;
+    openedVector.set($vectors[active].id)
+}
+
+
+function deleteTaskForVector () {
+    vectors.update( items => {
+        let vec = items.find( elem => elem.id === $openedVector)
+        vec.tasks = vec.tasks.filter( elem => elem.id != taskToBeDeleted[1])
+        return [...items]
+    })
 }
 
 
@@ -88,6 +103,7 @@ function shuffleVectors (onPos) {
     $vectors.forEach((elem, index) => {
         if (elem.id === currentActiveID) {
             active = index; 
+            openedVector.set($vectors[active].id);
         }
     })
 }
@@ -114,6 +130,7 @@ function shuffleVectors (onPos) {
                 draggable={true}
                 on:click={e => {
                     active = i;
+                    openedVector.set($vectors[active].id);
                     setTimeout(handleInput, 1);
                 } } 
                 on:dragstart={e => indexShuffleVector = i}
@@ -153,7 +170,7 @@ function shuffleVectors (onPos) {
         />
         <button 
             class="delete-vector"
-            on:click={e => {isDeletionWarning = !isDeletionWarning}}
+            on:click={e => {isDeleteVectorWarning = !isDeleteVectorWarning}}
             ><svg><use xlink:href="#ico-delete-in-basket"/></svg>
         </button>
     </div>
@@ -164,10 +181,15 @@ function shuffleVectors (onPos) {
             <ItemTask 
                 task={task}
                 isShowImportance={false}
+                on:remove={e => {
+                    isDeleteTaskWarning = true;
+                    taskToBeDeleted = [task.title, task.id];
+                }}
             />
         {/each}
         <button
             class="add-new-task-for-vector"
+            on:click={e => isOpenNewTaskForVector = true}
             >
                 <svg><use xlink:href="#ico-add"/></svg>
                 <span>new task</span>
@@ -221,24 +243,42 @@ function shuffleVectors (onPos) {
     
 </div>
 
-
-{#if isDeletionWarning}
-    <Tulle on:closeDialog={() => {isDeletionWarning = false}} >
-        <Confirmation
-            on:confirm={e => {
-                isDeletionWarning = false;
-                delVector();
-            }}
-            on:noConfirm={e => isDeletionWarning = false}
-            >
-            <div class="del-message">
-                <div class="del-message-title">Delete?</div>
-                <div class="del-message-vector">
-                    {$vectors[active].icon} {$vectors[active].title}
-                </div>
-            </div>
-        </Confirmation>
+{#if isOpenNewTaskForVector}
+    <Tulle on:closeDialog={e => isOpenNewTaskForVector = false} >
+        <DialogTaskVector />
     </Tulle>
+{/if}
+
+
+{#if isDeleteVectorWarning}
+    <Confirmation
+        on:confirm={e => {
+            isDeleteVectorWarning = false;
+            delVector();
+        }}
+        on:noConfirm={e => isDeleteVectorWarning = false}
+        >
+        <div class="del-message">
+            <div class="del-message-title">Delete?</div>
+            <div class="del-message-vector">
+                {$vectors[active].icon} {$vectors[active].title}
+            </div>
+        </div>
+    </Confirmation>
+{/if}
+
+
+{#if isDeleteTaskWarning}
+    <Confirmation
+        on:confirm={deleteTaskForVector}
+        on:noConfirm={e => isDeleteTaskWarning = false}
+        >
+        <div class="del-message">
+            <div class="id">id: {taskToBeDeleted[1]}</div>
+            <div class="title">«{taskToBeDeleted[0]}»</div>
+            <div class="question">Delete task?</div>
+        </div>
+    </Confirmation>
 {/if}
 
 
@@ -537,5 +577,26 @@ button.add-new-task-for-vector > svg {
     justify-content: center;
     align-items: center;
 
+}
+
+
+/* DELETE QUESTIOM */
+
+.del-message > .id {
+    font-size: .5em;
+    opacity: .5;
+    text-align: center;
+}
+
+.del-message > .title {
+    font-size: 1em;
+    font-weight: 700;
+    padding: 1em 0;
+    text-align: center;
+}
+
+.del-message > .question {
+    font-size: .8em;
+    text-align: center;
 }
 </style>

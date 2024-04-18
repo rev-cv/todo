@@ -5,6 +5,7 @@ import "../style.css";
 import SvgSprite from '../components/SvgSprite.svelte';
 import HeaderMenu from '../components/HeaderMenu.svelte';
 import NewTask from '../components/NewTask.svelte';
+import BtnNewTask from '../components/BtnNewTask.svelte'
 import NewProject from '../components/NewProject.svelte';
 import ChangeDate from '../components/ChangeDate.svelte';
 import ChangeDecade from '../components/ChangeDecade.svelte';
@@ -132,6 +133,10 @@ let openedSubTaskFor = TaskForSub[0];
         <!-- <NewTask /> -->
 
     </main>
+
+    <BtnNewTask />
+
+    
 </div>
 
 
@@ -145,6 +150,8 @@ let openedSubTaskFor = TaskForSub[0];
         background-color: var(--color-canvas);
         color: var(--color-content);
         letter-spacing: .8px;
+
+        position: relative;
     }
 
     main {
