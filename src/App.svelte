@@ -1,21 +1,18 @@
 <script>
-import "../reset.css";
-import "../style.css";
+import SvgSprite from './components/SvgSprite.svelte';
+import HeaderMenu from './components/HeaderMenu.svelte';
+import NewTask from './components/NewTask.svelte';
+import BtnNewTask from './components/BtnNewTask.svelte'
+import NewProject from './components/NewProject.svelte';
+import ChangeDate from './components/ChangeDate.svelte';
+import ChangeDecade from './components/ChangeDecade.svelte';
+import ChangeYear from './components/ChangeYear.svelte';
 
-import SvgSprite from '../components/SvgSprite.svelte';
-import HeaderMenu from '../components/HeaderMenu.svelte';
-import NewTask from '../components/NewTask.svelte';
-import BtnNewTask from '../components/BtnNewTask.svelte'
-import NewProject from '../components/NewProject.svelte';
-import ChangeDate from '../components/ChangeDate.svelte';
-import ChangeDecade from '../components/ChangeDecade.svelte';
-import ChangeYear from '../components/ChangeYear.svelte';
+import TasksForDay from './components/TasksForDay.svelte';
+import TasksForDecade from './components/TasksForDecade.svelte';
+import TasksForYear from './components/TasksForYear.svelte';
 
-import TasksForDay from '../components/TasksForDay.svelte';
-import TasksForDecade from '../components/TasksForDecade.svelte';
-import TasksForYear from '../components/TasksForYear.svelte';
-
-import { page } from '../store/OpenPage'
+import { page } from './store/OpenPage'
 
 let isOpenNewProject = false;
 const TaskForSub = [
@@ -25,18 +22,18 @@ const TaskForSub = [
     "year"
 ]
 let openedSubTaskFor = TaskForSub[0];
-
+  
 </script>
-
 
 <SvgSprite />
 
+<main class="container">
 
-<div class="layout">
+    
 
     <HeaderMenu />
 
-    <main>
+    <div class="window">
 
         {#if $page === '/main'}
 
@@ -130,122 +127,120 @@ let openedSubTaskFor = TaskForSub[0];
             
         {/if}
 
-        <!-- <NewTask /> -->
-
-    </main>
+    </div>
 
     <BtnNewTask />
 
+
+</main>
+
+<style>
+
+main {
+    font-size: 1rem;
+
+    display: flex;
+    flex-direction: row;
+    height: 100vh;
+    background-color: var(--color-canvas);
+    color: var(--color-content);
+    letter-spacing: .8px;
+
+    position: relative;
+}
+
+.window {
+    flex-grow: 1;
+
+    display: flex;
+    flex-direction: column;
+}
+
+.content {
+    overflow: auto;
+    flex-grow: 1;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.header-page {
+    margin: 1em 1em 1em 0;
+    height: 3em;
+
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    background-color: var(--color-block);
+    border-radius: .8em;
+    box-shadow: var(--color-block-shadow-on-block);
+
+    padding: .2em .2em .2em 1em;
     
-</div>
+    user-select: none;
+}
 
+.header-page > * {
+    flex-shrink: 0;
+}
 
-<style global>
+.header-page > h1 {
+    font-weight: 700;
+    font-size: 1.2em;
+    opacity: .8;
+    margin-right: .3em;
+}
 
-    .layout {
-        font-size: 1rem;
+.header-page > .stretch {
+    flex-grow: 1;
+}
 
-        display: flex;
-        height: 100vh;
-        background-color: var(--color-canvas);
-        color: var(--color-content);
-        letter-spacing: .8px;
+.new-project, 
+.btn-sub-task-for {
+    font-size: .9em;
+    font-weight: 700;
 
-        position: relative;
-    }
+    display: flex;
+    align-items: center;
 
-    main {
-        flex-grow: 1;
+    background-color: var(--color-block);
 
-        display: flex;
-        flex-direction: column;
-    }
+    padding: 0 1em;
+    border-radius: .6em;
 
-    .content {
-        overflow: auto;
-        flex-grow: 1;
+    color: var(--color-content-B);
 
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-    }
+    transition: 0.08s ease-out;
+    height: 2.4em;
+    margin: .4em;
+    
+    border: .1em solid rgba(0, 0, 0, .2);;
+}
 
-    .header-page {
-        margin: 1em 1em 1em 0;
-        height: 3em;
+.new-project > svg {
+    height: 1em;
+    width: 1em;
+    margin-right: .5em;
+}
 
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
+.new-project:hover, 
+.btn-sub-task-for:hover {
+    transform: scale(1.05);
+    box-shadow: var(--color-block-shadow);
+}
 
-        background-color: var(--color-block);
-        border-radius: .8em;
-        box-shadow: var(--color-block-shadow-on-block);
+.new-project:active, 
+.btn-sub-task-for:active {
+    transform: scale(.9);
+}
 
-        padding: .2em .2em .2em 1em;
-        
-        user-select: none;
-    }
+.btn-sub-task-for {
+    margin: .4em .2em;
+}
 
-    .header-page > * {
-        flex-shrink: 0;
-    }
-
-    .header-page > h1 {
-        font-weight: 700;
-        font-size: 1.2em;
-        opacity: .8;
-        margin-right: .3em;
-    }
-
-    .header-page > .stretch {
-        flex-grow: 1;
-    }
-
-    .new-project, 
-    .btn-sub-task-for {
-        font-size: .9em;
-        font-weight: 700;
-
-        display: flex;
-        align-items: center;
-
-        background-color: var(--color-block);
-
-        padding: 0 1em;
-        border-radius: .6em;
-
-        color: var(--color-content-B);
-
-        transition: 0.08s ease-out;
-        height: 2.4em;
-        margin: .4em;
-        
-        border: .1em solid rgba(0, 0, 0, .2);;
-    }
-
-    .new-project > svg {
-        height: 1em;
-        width: 1em;
-        margin-right: .5em;
-    }
-
-    .new-project:hover, 
-    .btn-sub-task-for:hover {
-        transform: scale(1.05);
-        box-shadow: var(--color-block-shadow);
-    }
-
-    .new-project:active, 
-    .btn-sub-task-for:active {
-        transform: scale(.9);
-    }
-
-    .btn-sub-task-for {
-        margin: .4em .2em;
-    }
-
-    .active {
-        background-color: var(--color-accent);
-    }
+.active {
+    background-color: var(--color-accent);
+}
 </style>
