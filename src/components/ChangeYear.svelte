@@ -16,6 +16,7 @@ function changeyear(arg=".") {
 }
 </script>
 
+
 <button class="btn-back" on:click={() => changeyear("-")}>
     <svg><use xlink:href="#ico-arrow"/></svg>
 </button>
@@ -32,12 +33,15 @@ function changeyear(arg=".") {
     <svg><use xlink:href="#ico-arrow"/></svg>
 </button>
 
+
 <style>
-.btn-back, .btn-now, .btn-next {
+
+.btn-back, 
+.btn-now, 
+.btn-next {
     font-size: 1rem;
 
     background-color: var(--color-block);
-    /* box-shadow: var(--color-block-shadow); */
     color: var(--color-content-B);
 
     margin: .4em .2em;
@@ -52,16 +56,30 @@ function changeyear(arg=".") {
     height: 2.4em;
 
     transition: transform 100ms ease-out;
+
+    position: relative;
+    overflow: hidden;
 }
 
-.btn-back:hover, .btn-now:hover, .btn-next:hover {
-    transform: scale(1.05);
-    box-shadow: var(--color-block-shadow-on-block);
-    border: .1em solid rgba(0, 0, 0, 0);
+.btn-back::after, 
+.btn-now::after, 
+.btn-next::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    background-color: var(--color-content-C);
+
+    opacity: 0;
+    transition: opacity 200ms ease-out;
 }
 
-.btn-back:active, .btn-now:active, .btn-next:active {
-    transform: scale(.9);
+.btn-back:hover::after, 
+.btn-now:hover::after, 
+.btn-next:hover::after {
+    opacity: .3;
 }
 
 .btn-select-year {
@@ -70,7 +88,9 @@ function changeyear(arg=".") {
     text-align: center;
 }
 
-.btn-back, .btn-now, .btn-next {
+.btn-back, 
+.btn-now, 
+.btn-next {
     display: flex;
     justify-content: center;
     align-items: center;
@@ -80,7 +100,8 @@ function changeyear(arg=".") {
     width: 1.2em;
 }
 
-.btn-back > svg, .btn-next > svg {
+.btn-back > svg, 
+.btn-next > svg {
     width: 40%;
     height: 40%;
 }
@@ -102,7 +123,4 @@ function changeyear(arg=".") {
     background-color: var(--color-accent);
 }
 
-.is-current-year:active, .is-current-year:hover {
-    transform: scale(1);
-}
 </style>

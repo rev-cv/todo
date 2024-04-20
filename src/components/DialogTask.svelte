@@ -241,6 +241,14 @@ onDestroy(_ => {
                     if (task.title.length === 0) 
                         task.title = `task ${task.id}`
                 }}
+                on:keydown={e => {
+                    if (e.key === "Enter" && task.id != -1){
+                        isOpenDialog.set(false)
+                        setTimeout(() => {
+                            dispatch('closeDialog')
+                        }, 200)
+                    }
+                }}
                 placeholder="new task"
             >
         </div>
@@ -258,7 +266,7 @@ onDestroy(_ => {
                     class={task.importance === imp[1] ? `imp-${imp[1]} active` : `imp-${imp[1]}`}
                     title={imp[2]}
                     on:click={e => task.importance = imp[1]}
-                    >{imp[0]}
+                    ><span>{imp[0]}</span>
                 </button>
             {/each}
         </div>
@@ -296,7 +304,7 @@ onDestroy(_ => {
         <div class="time-line">
             <div class="mark">Start</div>
             <div class="mark">Deadline</div>
-            <div class="mark">Time estimate</div>
+            <div class="mark">Estimate</div>
 
             <button
                 on:click={e => {
@@ -515,7 +523,7 @@ onDestroy(_ => {
     box-shadow: var(--color-block-shadow);
 
     width: 20em;
-    height: 21em;
+    height: 23.3em;
 
     display: flex;
     flex-direction: column;
@@ -545,6 +553,7 @@ onDestroy(_ => {
     font-weight: 700;
     opacity: .5;
     user-select: none;
+    text-align: left;
 }
 
 
@@ -600,6 +609,10 @@ onDestroy(_ => {
     border-radius: .6em;
 
     transition: background-color 500ms ease-out;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 .widget > .main-area > .importance-line > button::after {
@@ -989,6 +1002,7 @@ onDestroy(_ => {
     font-weight: 700;
     padding: 1em 0;
     text-align: center;
+    word-break: break-all;
 }
 
 .del-message > .question {

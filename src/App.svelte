@@ -1,7 +1,6 @@
 <script>
 import SvgSprite from './components/SvgSprite.svelte';
 import HeaderMenu from './components/HeaderMenu.svelte';
-import NewTask from './components/NewTask.svelte';
 import BtnNewTask from './components/BtnNewTask.svelte'
 import NewProject from './components/NewProject.svelte';
 import ChangeDate from './components/ChangeDate.svelte';
@@ -25,11 +24,11 @@ let openedSubTaskFor = TaskForSub[0];
   
 </script>
 
+
 <SvgSprite />
 
-<main class="container">
 
-    
+<main class="container">
 
     <HeaderMenu />
 
@@ -86,21 +85,6 @@ let openedSubTaskFor = TaskForSub[0];
             </div>
             <div class="content">Task-Ideas</div>
             
-        {:else if $page === '/projects'}
-
-            <div class="header-page">
-                <h1>Projects</h1>
-                <div class="stretch" />
-                <button class="new-project" on:click={() => {isOpenNewProject = true}}>
-                    <svg><use xlink:href="#ico-add"/></svg>
-                    <span>New project</span>
-                </button>
-                {#if isOpenNewProject}
-                    <NewProject on:closeDialog={e => {isOpenNewProject = false}} />
-                {/if}
-            </div>
-            <div class="content">Projects</div>
-            
         {:else if $page === '/user'}
 
             <div class="header-page">
@@ -131,8 +115,8 @@ let openedSubTaskFor = TaskForSub[0];
 
     <BtnNewTask />
 
-
 </main>
+
 
 <style>
 
@@ -197,7 +181,8 @@ main {
     flex-grow: 1;
 }
 
-.new-project, 
+
+
 .btn-sub-task-for {
     font-size: .9em;
     font-weight: 700;
@@ -212,32 +197,31 @@ main {
 
     color: var(--color-content-B);
 
-    transition: 0.08s ease-out;
+    transition: 200ms ease-out;
     height: 2.4em;
-    margin: .4em;
-    
-    border: .1em solid rgba(0, 0, 0, .2);;
-}
-
-.new-project > svg {
-    height: 1em;
-    width: 1em;
-    margin-right: .5em;
-}
-
-.new-project:hover, 
-.btn-sub-task-for:hover {
-    transform: scale(1.05);
-    box-shadow: var(--color-block-shadow);
-}
-
-.new-project:active, 
-.btn-sub-task-for:active {
-    transform: scale(.9);
-}
-
-.btn-sub-task-for {
     margin: .4em .2em;
+    
+    border: .1em solid rgba(0, 0, 0, .2);
+
+    position: relative;
+    overflow: hidden;
+}
+
+.btn-sub-task-for::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    background-color: var(--color-content-C);
+
+    opacity: 0;
+    transition: opacity 200ms ease-out;
+}
+
+.btn-sub-task-for:hover::after {
+    opacity: .3;
 }
 
 .active {

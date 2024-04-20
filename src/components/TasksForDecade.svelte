@@ -351,6 +351,7 @@ function sortTaskList(arg="creation"){
     margin-bottom: .5em;
     border-bottom: .1em solid var(--color-content-C);
     user-select: none;
+    text-align: left;
 }
 
 .just-waiting {

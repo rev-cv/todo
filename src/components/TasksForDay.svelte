@@ -150,6 +150,26 @@ function manageTaskForDay(list, position) {
 
     align-self: flex-end;
     margin-right: 1em;
+
+    position: relative;
+    overflow: hidden;
+}
+
+.btn-open-all-tasks::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    background-color: var(--color-content-C);
+
+    opacity: 0;
+    transition: opacity 200ms ease-out;
+}
+
+.btn-open-all-tasks:hover::after {
+    opacity: .3;
 }
 
 .btn-open-all-tasks > svg {
@@ -162,6 +182,7 @@ function manageTaskForDay(list, position) {
     font-size: .5em;
     font-weight: 700;
     user-select: none;
+    text-align: left;
 }
 
 
@@ -169,6 +190,7 @@ function manageTaskForDay(list, position) {
     flex-grow: 1;
     display: flex;
     margin-bottom: 1em;
+    overflow: auto;
 }
 
 .block-pers,
@@ -180,8 +202,9 @@ function manageTaskForDay(list, position) {
     height: 30em;
 }
 
-.block-decade {
-    overflow-y: scroll;
+.block-pers {
+    position: sticky;
+    top: 1em;
 }
 
 .hidden {
@@ -204,7 +227,7 @@ function manageTaskForDay(list, position) {
 .block-300per {
     background-color: var(--color-block);
     margin: 0 0 1em 0;
-    padding: 1em;
+    padding: .5em 1em 1em 1em;
     border-radius: .2em .6em .6em .2em;
     border-left: .2em solid yellowgreen;
     box-shadow: var(--color-block-shadow-on-block);

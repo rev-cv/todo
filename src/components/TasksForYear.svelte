@@ -195,7 +195,6 @@ function shuffleVectors (onPos) {
                 <span>new task</span>
         </button>
     </div>
-    
 
     <div class="block">
         <div class="descr-block">
@@ -240,7 +239,6 @@ function shuffleVectors (onPos) {
         />
     </div>
 
-    
 </div>
 
 {#if isOpenNewTaskForVector}
@@ -397,6 +395,7 @@ button.new-vector:active {
     margin: .5em;
     user-select: none;
     color: var(--color-content-B);
+    text-align: left;
 }
 
 .title-block {
@@ -565,6 +564,7 @@ button.add-new-task-for-vector > svg {
     font-size: 1.4em;
     font-weight: 700;
     text-align: center;
+    word-break: break-all;
 }
 
 .del-message-vector {

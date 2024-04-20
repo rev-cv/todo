@@ -77,7 +77,6 @@ function changedate (arg = ".") {
     font-size: 1rem;
 
     background-color: var(--color-block);
-    /* box-shadow: var(--color-block-shadow); */
     color: var(--color-content-B);
 
     margin: .4em .2em;
@@ -90,8 +89,6 @@ function changedate (arg = ".") {
 
     width: 2.4em;
     height: 2.4em;
-
-    transition: transform 100ms ease-out;
 
     position: relative;
     overflow: hidden;
@@ -117,15 +114,7 @@ function changedate (arg = ".") {
 .btn-now:hover::after, 
 .btn-next:hover::after, 
 .btn-select-day:hover::after {
-    overflow: .3;
-}
-
-.btn-back:hover, 
-.btn-now:hover, 
-.btn-next:hover, 
-.btn-select-day:hover {
-    box-shadow: var(--color-block-shadow-on-block);
-    border: .1em solid rgba(0, 0, 0, 0);
+    opacity: .3;
 }
 
 .btn-select-day {
@@ -135,7 +124,9 @@ function changedate (arg = ".") {
     padding: .2em .6em;
 }
 
-.btn-back, .btn-now, .btn-next {
+.btn-back, 
+.btn-now, 
+.btn-next {
     display: flex;
     justify-content: center;
     align-items: center;
@@ -165,10 +156,6 @@ function changedate (arg = ".") {
 
 .is-current-day {
     background-color: var(--color-accent);
-}
-
-.is-current-day:active, .is-current-day:hover {
-    transform: scale(1);
 }
 
 .date {

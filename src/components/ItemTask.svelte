@@ -123,7 +123,10 @@ function changeStatus(){
     </Tulle>
 {:else if isOpenedDialog && task.type === "vector"}
     <Tulle on:closeDialog={e => isOpenedDialog = false} >
-        <DialogTaskVector task={task} />
+        <DialogTaskVector 
+            task={task} 
+            on:closeDialog={e => isOpenedDialog = false}
+        />
     </Tulle>
 {/if}
 

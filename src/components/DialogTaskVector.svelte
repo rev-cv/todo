@@ -1,5 +1,7 @@
 <script>
 // @ts-nocheck
+import { createEventDispatcher } from 'svelte';
+const dispatch = createEventDispatcher();
 import { vectors, openedVector } from '../store/TestTaskList'
 import { isOpenDialog } from '../store/OpenDialog'
 import { onDestroy } from 'svelte';
@@ -41,11 +43,11 @@ function CREATE () {
 
 onDestroy(_ => {
 
-    if (task.id === -1) {
+    if (task.id === -1)
         CREATE()
-    } else {
+    else 
         UPDATE()
-    }
+
 })
 
 </script>
@@ -66,7 +68,15 @@ onDestroy(_ => {
                 bind:value={task.title} 
                 on:change={e => {
                     if (task.title.length === 0) 
-                    task.title = `task ${task.id}`
+                        task.title = `task ${task.id}`
+                }}
+                on:keydown={e => {
+                    if (e.key === "Enter"){
+                        isOpenDialog.set(false)
+                        setTimeout(() => {
+                            dispatch('closeDialog')
+                        }, 200)
+                    }
                 }}
                 placeholder="new task"
             >

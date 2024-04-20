@@ -102,18 +102,10 @@ function changedecade(arg="."){
     overflow: hidden;
 }
 
-.btn-back:hover, 
-.btn-now:hover, 
-.btn-next:hover, 
-.btn-select-decade:hover {
-    box-shadow: var(--color-block-shadow-on-block);
-    border: .1em solid rgba(0, 0, 0, 0);
-}
-
 .btn-back::after, 
 .btn-now::after, 
 .btn-next::after, 
-.btn-select-day::after {
+.btn-select-decade::after {
     content: "";
     position: absolute;
     top: 0;
@@ -129,8 +121,8 @@ function changedecade(arg="."){
 .btn-back:hover::after, 
 .btn-now:hover::after, 
 .btn-next:hover::after, 
-.btn-select-day:hover::after {
-    overflow: .3;
+.btn-select-decade:hover::after {
+    opacity: .3;
 }
 
 .btn-select-decade {
@@ -140,7 +132,9 @@ function changedecade(arg="."){
     padding: .2em .6em;
 }
 
-.btn-back, .btn-now, .btn-next {
+.btn-back, 
+.btn-now, 
+.btn-next {
     display: flex;
     justify-content: center;
     align-items: center;
@@ -152,17 +146,6 @@ function changedecade(arg="."){
     transition: scale 200ms ease-out;
 }
 
-.btn-now:hover > svg, 
-.btn-back:hover > svg, 
-.btn-next:hover > svg {
-    scale: 1.2;
-}
-
-.btn-now:active > svg, 
-.btn-back:active > svg, 
-.btn-next:active > svg {
-    scale: 1;
-}
 
 .btn-now {
     width: 1.2em;
@@ -191,7 +174,8 @@ function changedecade(arg="."){
     background-color: var(--color-accent);
 }
 
-.is-current-day:active, .is-current-day:hover {
+.is-current-day:active, 
+.is-current-day:hover {
     transform: scale(1);
 }
 
